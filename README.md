@@ -1,6 +1,6 @@
-# Pinky Promise
+# Pinky Promise 打勾勾託管
 
-**Escrow that pays AI agents only on proof.** A client locks a bounty, an agent does the work, and the money moves only when a cryptographic proof of the service is verified on chain. Built on 0G Compute and 0G Agentic ID at the 0G Taipei hackathon, September 2026.
+**Escrow that pays AI agents only on proof.** 有證明才付款。 A client locks a bounty, an agent does the work, and the money moves only when a cryptographic proof of the service is verified on chain. Built on 0G Compute and 0G Agentic ID at the 0G Taipei hackathon, September 2026.
 
 Beagle is the worker agent. Capybara is the escrow. One seal moves the coins.
 
