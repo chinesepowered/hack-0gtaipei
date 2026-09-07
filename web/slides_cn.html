@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pinky Promise 簡報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --vault:#163A31; --vault-2:#1E4A3E; --vault-3:#2E6B5A; --paper:#F4EAD3; --paper-2:#E9DDC0; --ink:#1E1A17; --ink-2:#5B5248; --gold:#F2B53A; --wax:#D8432F; --mint:#5FD3A6;
+    --display:"Silkscreen", ui-monospace, monospace; --mono:"IBM Plex Mono", ui-monospace, monospace; --sans:"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", ui-sans-serif, system-ui, sans-serif; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--vault); color:var(--paper); font-family:var(--sans); }
+  .deck { height:100%; overflow:hidden; }
+  .slide { height:100vh; width:100vw; display:none; padding:56px 72px; position:relative; }
+  .slide.on { display:grid; }
+  .slide h1 { font-family:var(--display); font-size:clamp(34px, 5vw, 64px); line-height:1.05; margin:0; }
+  .slide h1 small { display:block; font-family:var(--sans); font-weight:700; font-size:clamp(20px,2.4vw,32px); margin-top:10px; }
+  .slide h2 { font-weight:700; font-size:clamp(24px, 3vw, 38px); margin:0 0 18px; }
+  .slide p, .slide li { font-size:clamp(17px, 1.6vw, 24px); line-height:1.55; max-width:40em; }
+  .slide li { margin:8px 0; }
+  .gold { color:var(--gold); } .mint { color:var(--mint); } .wax { color:#FF8A73; }
+  .foot { position:absolute; left:72px; right:72px; bottom:28px; display:flex; justify-content:space-between; font-family:var(--mono); font-size:13px; color:#B7CEC4; }
+  .nav { position:fixed; right:18px; bottom:14px; font-family:var(--mono); font-size:12px; color:#B7CEC4; }
+  .s1 { grid-template-columns: 1.1fr .9fr; align-items:center; gap:40px; }
+  .stage { position:relative; height:360px; border:4px solid var(--vault-3); background:var(--vault-2); image-rendering:pixelated; }
+  .ground { position:absolute; left:0; right:0; bottom:0; height:40px; background:var(--vault-3); border-top:4px solid #3E836E; }
+  .actor { position:absolute; bottom:50px; text-align:center; font-family:var(--display); font-size:14px; }
+  .actor small { display:block; font-family:var(--sans); font-size:13px; color:#B7CEC4; }
+  .bag { position:absolute; bottom:70px; left:40%; z-index:2; animation: pass 3.2s steps(12) infinite; }
+  @keyframes pass { 0%,20% { left:40%; } 45%,55% { left:60%; } 80%,100% { left:17%; } }
+  .s2 { grid-template-columns: 1fr 1fr; gap:48px; align-content:center; }
+  .quote { border-left:6px solid var(--gold); padding-left:22px; font-size:clamp(20px, 2.2vw, 30px); line-height:1.5; }
+  .s3 { align-content:center; }
+  .flow { display:grid; grid-template-columns: repeat(4, 1fr); gap:18px; margin-top:8px; }
+  .box { background:var(--paper); color:var(--ink); padding:18px 18px 16px; border:4px solid var(--paper-2); min-height:220px; }
+  .box .n { font-family:var(--display); font-size:22px; color:var(--vault-3); }
+  .box .t { font-weight:700; font-size:clamp(16px,1.5vw,21px); margin:6px 0 8px; }
+  .box .d { font-size:clamp(14px,1.2vw,17px); color:var(--ink-2); line-height:1.5; }
+  .box .z { margin-top:10px; font-family:var(--mono); font-size:12.5px; color:var(--vault-3); }
+  .rule { margin-top:26px; font-size:clamp(15px,1.3vw,19px); color:#B7CEC4; }
+  .s4 { grid-template-columns: 1.2fr .8fr; gap:48px; align-content:center; }
+  .proof-list li b { color:var(--gold); }
+  .seal { position:absolute; right:90px; top:60px; transform:rotate(-12deg); }
+  .receipt { background:var(--paper); color:var(--ink); font-family:var(--mono); font-size:13.5px; line-height:1.6; padding:20px 22px; }
+  .receipt .ok { color:#1C7F5B; } .receipt .bad { color:var(--wax); }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide s1 on">
+  <div>
+    <h1>Pinky Promise<small>打勾勾託管：有證明才付款</small></h1>
+    <p style="margin-top:18px">一個只在 AI Agent <span class="gold">證明自己真的做了事</span> 之後才付款的託管合約。</p>
+    <p>Beagle 接單做事，Capybara 保管款項，一枚密碼學印章讓錢移動。建構於 0G Compute 與 0G Agentic ID。</p>
+  </div>
+  <div class="stage" aria-hidden="true">
+    <div class="actor" style="left:12%"><div id="b1"></div>Beagle<small>工人 Agent</small></div>
+    <div class="bag" id="bag1"></div>
+    <div class="actor" style="right:26%; bottom:62px"><div id="v1"></div></div>
+    <div class="actor" style="right:8%"><div id="c1"></div>Capybara<small>託管合約</small></div>
+    <div class="ground"></div>
+  </div>
+  <div class="foot"><span>0G 台北黑客松 2026</span><span>賽道 C：鏈上 Agent</span></div>
+</section>
+
+<section class="slide s2">
+  <div>
+    <h2>Agent 正在變成經濟參與者</h2>
+    <p>它們接單、收費、雇用其他 Agent。每一跳之間，沒有人在看。</p>
+    <p>今天付款方只有兩個壞選項：相信 Agent 的一面之詞，或相信隨時能換模型、改提示詞、捏造答案的營運者。</p>
+    <p class="wax">假評價早已氾濫：一份 ERC-8004 生態研究移除女巫評價後，86% 有評分的 Agent 完全沒有真實回饋。</p>
+  </div>
+  <div class="quote">
+    「我信你」不是安全模型。<br><br>
+    <span class="gold">每一跳都需要證明。</span>而且要有人憑證明付款。
+  </div>
+  <div class="foot"><span>問題</span><span>2 / 4</span></div>
+</section>
+
+<section class="slide s3">
+  <h2>Pinky Promise 怎麼運作</h2>
+  <div class="flow">
+    <div class="box"><div class="n">1</div><div class="t">客戶鎖定賞金</div><div class="d">任務雜湊、指定 Agent 與 0G 代幣存入託管合約。</div><div class="z">0G Galileo 測試網 / ProofEscrow.sol</div></div>
+    <div class="box"><div class="n">2</div><div class="t">Beagle 做事</div><div class="d">推理在 0G Compute 上執行並開啟 verify_tee，供應商的 TEE 對輸入、模型、輸出簽名。</div><div class="z">0G Compute Router / 0GM-1.0-35B</div></div>
+    <div class="box"><div class="n">3</div><div class="t">Beagle 蓋章</div><div class="d">具有 Agentic ID 的密封 Agent 回應時附上 X-Agent-Proof，由只存在 TEE 內的金鑰簽署。</div><div class="z">0G Agentic ID / ERC-7857 #383</div></div>
+    <div class="box"><div class="n">4</div><div class="t">Capybara 憑章放款</div><div class="d">合約還原簽章者、比對 getAgentSeal 後放款。偽造或重放的印章一律回滾。</div><div class="z">settleWithSeal() / 與 ERC-8004 信譽同一摘要</div></div>
+  </div>
+  <div class="rule">任何人都能離線驗證印章，免 gas。同一枚印章既能結算付款，也能累積鏈上信譽。</div>
+  <div class="foot"><span>方案</span><span>3 / 4</span></div>
+</section>
+
+<section class="slide s4">
+  <div>
+    <h2>今天已在 Galileo 上線</h2>
+    <ul class="proof-list">
+      <li><b>密封版 Beagle</b> 是 Agentic ID #383，透過 0G attestor 部署，並在 TEE 內自行註冊了簽章服務。</li>
+      <li><b>託管已憑真實 X-Agent-Proof 放款。</b>重放印章被以「seal reused」拒絕，偽造收據被以「bad proof」拒絕。</li>
+      <li><b>同時用上兩者</b>：0G Compute 的 TEE 可驗證推理，以及 ERC-7857 身份與相容 ERC-8004 的證明。</li>
+      <li><b>下一步</b>：憑同一印章留評、多 Agent 多跳任務（Beagle 雇用檢查員）、客服機器人的對話收據。</li>
+    </ul>
+    <p class="mint">憑證明付款是 Agent 經濟缺少的結算層，而 0G 是唯一每一層都有證明的技術棧。</p>
+  </div>
+  <div class="receipt">
+    <div>job #5 / 密封版 Beagle / 0.005 0G</div>
+    <div class="ok">X-Agent-Proof 簽章者符合 getAgentSeal(383)</div>
+    <div class="ok">settleWithSeal → 已付款 / tx 0x3d21…7552</div>
+    <div class="bad">job #4 重放 → 回滾：seal reused</div>
+    <div class="bad">偽造收據 → 回滾：bad proof</div>
+    <div style="margin-top:10px">escrow 0xac8f…fb95 / chain 16602</div>
+    <div>github: hack-0gtaipei</div>
+  </div>
+  <div class="seal" id="seal4"></div>
+  <div class="foot"><span>證明</span><span>4 / 4</span></div>
+</section>
+
+</div>
+<div class="nav">← → 切換</div>
+<script src="/sprites.js"></script>
+<script>
+document.getElementById("b1").innerHTML = spriteSVG(SPRITES.beagle.happy, 10);
+document.getElementById("c1").innerHTML = spriteSVG(SPRITES.capy.idle, 10);
+document.getElementById("v1").innerHTML = spriteSVG(SPRITES.vault, 7);
+document.getElementById("bag1").innerHTML = spriteSVG(SPRITES.bag, 6);
+document.getElementById("seal4").innerHTML = spriteSVG(SPRITES.seal, 9);
+const slides = [...document.querySelectorAll(".slide")]; let i = 0;
+const q = Number(new URLSearchParams(location.search).get("slide")); if (q >= 1 && q <= slides.length) { i = q - 1; slides.forEach((s, k) => s.classList.toggle("on", k === i)); }
+const show = (n) => { i = (n + slides.length) % slides.length; slides.forEach((s, k) => s.classList.toggle("on", k === i)); };
+addEventListener("keydown", (e) => { if (["ArrowRight", " ", "PageDown"].includes(e.key)) show(i + 1); if (["ArrowLeft", "PageUp"].includes(e.key)) show(i - 1); });
+addEventListener("click", () => show(i + 1));
+</script>
+</body>
+</html>

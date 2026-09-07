@@ -67,6 +67,9 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, "http://x");
     if (req.method === "GET" && url.pathname === "/") { res.writeHead(200, { "Content-Type": "text/html" }); return res.end(readFileSync(new URL("../web/index.html", import.meta.url))); }
+    if (req.method === "GET" && (url.pathname === "/slides" || url.pathname === "/slides.html")) { res.writeHead(200, { "Content-Type": "text/html" }); return res.end(readFileSync(new URL("../web/slides.html", import.meta.url))); }
+    if (req.method === "GET" && (url.pathname === "/slides_cn" || url.pathname === "/slides_cn.html")) { res.writeHead(200, { "Content-Type": "text/html" }); return res.end(readFileSync(new URL("../web/slides_cn.html", import.meta.url))); }
+    if (req.method === "GET" && url.pathname === "/sprites.js") { res.writeHead(200, { "Content-Type": "application/javascript" }); return res.end(readFileSync(new URL("../web/sprites.js", import.meta.url))); }
     if (req.method === "GET" && url.pathname === "/api/info") {
       const s = sealedInfo();
       const [clientBal, agentBal, sealBal] = await Promise.all([
