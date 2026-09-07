@@ -5,7 +5,7 @@ import { parseEther, recoverMessageAddress, formatEther } from "viem";
 import { publicClient, wallet, feeOpts, escrowArtifact, explorerTx, explorerAddr, waitReceipt } from "./chain.mjs";
 import { workJob, agentAccount, hashText, receiptDigest } from "./agent.mjs";
 import { MODEL, ROUTER_NET, ROUTER_BASE } from "./router.mjs";
-import { sealedWork, sealedInfo } from "./sealed.mjs";
+import { sealedWork, sealedInfo, verifySeal } from "./sealed.mjs";
 
 const PORT = Number(process.env.PORT || 3000);
 const ESCROW = process.env.ESCROW_ADDRESS;
@@ -90,7 +90,16 @@ const server = http.createServer(async (req, res) => {
       try { return json(res, 200, mode === "sealed" ? await settleWithSeal(jobId, outputHash, proof) : await settle(receipt)); }
       catch (e) { return json(res, 200, { status: "reverted", error: revertReason(e) }); }
     }
-    if (req.method === "POST" && url.pathname === "/api/verify") { const { receipt, output } = await readBody(req); return json(res, 200, await verifyReceipt(receipt, output)); }
+    if (req.method === "POST" && url.pathname === "/api/verify") {
+      const { mode = "key", receipt, output, proof, exchange, jobId } = await readBody(req);
+      if (mode === "sealed") {
+        const onchainSeal = await publicClient.readContract({ address: process.env.AGENTIC_ID_ADDRESS, abi: [{ type: "function", name: "getAgentSeal", stateMutability: "view", inputs: [{ type: "uint256" }], outputs: [{ type: "address" }] }], functionName: "getAgentSeal", args: [BigInt(proof.agentId)] });
+        const v = await verifySeal({ proof, output, exchange, expectedSeal: onchainSeal });
+        let onChain = null; try { onChain = await readJob(jobId); } catch {}
+        return json(res, 200, { ...v, onChain });
+      }
+      return json(res, 200, await verifyReceipt(receipt, output));
+    }
     if (req.method === "GET" && url.pathname.startsWith("/api/job/")) return json(res, 200, await readJob(url.pathname.split("/").pop()));
     json(res, 404, { error: "not found" });
   } catch (e) { console.error(e); json(res, 500, { error: String(e.shortMessage || e.message) }); }

@@ -275,7 +275,7 @@ $("btnWork").onclick = async () => {
     $("proofBody").innerHTML = `<div class="kv" style="margin-top:0"><div class="k">type</div><div class="v">X-Agent-Proof from the TEE</div><div class="k">agent</div><div class="v">#${r.proof.agentId}</div><div class="k">who may redeem</div><div class="v">${short(r.proof.submitter)}</div><div class="k">exchange hash</div><div class="v">${short(r.proof.taskHash)}</div><div class="k">framework</div><div class="v">${short(r.proof.frameworkHash)}</div><div class="k">valid until</div><div class="v">${new Date(r.proof.deadline*1000).toLocaleTimeString()}</div><div class="k">signature</div><div class="v">${short(r.proof.signature)}</div></div>`;
     feed(`Reply carried X-Agent-Proof. Signer ${short(r.signer)} ${r.sealMatches ? "matches" : "does not match"} getAgentSeal(${r.proof.agentId}).`, r.sealMatches ? "ok" : "bad");
     if (r.answerError) feed(`Beagle's model call failed inside the TEE: ${r.answerError}. The seal is still valid.`, "dim");
-    enable(["btnSettle","btnFake"], true);
+    enable(["btnSettle","btnFake","btnVerify","btnVerifyTampered"], true);
   }
   slam(); $("s2").classList.add("done"); status("st2", "delivered with proof", "ok"); beagle("happy"); setTimeout(() => beagle("idle"), 1100);
   say(`Beagle delivered. The proof is <em>stamped</em>.`);
@@ -312,6 +312,12 @@ $("btnReplay").onclick = async () => {
 };
 
 const verify = async (output) => {
+  if (state.mode === "sealed") {
+    const r = await post("/api/verify", { mode: "sealed", proof: state.sealed.proof, output, exchange: state.sealed.exchange, jobId: state.jobId });
+    $("checks").innerHTML = chk("The reply matches the exchange hash in the seal", r.exchangeMatches) + chk("The signer is the AgentSeal registered on chain", r.signerMatches) + chk("The seal has not expired", r.notExpired) + chk("The job exists on chain", !!r.onChain);
+    feed(r.ok ? `Seal checks out offline. Signer ${short(r.signer)} is getAgentSeal(${state.sealed.proof.agentId}).` : `Seal failed: ${r.reasons.join("; ")}.`, r.ok ? "ok" : "bad");
+    return;
+  }
   const r = await post("/api/verify", { receipt: state.receipt, output });
   $("checks").innerHTML = chk("The answer matches the receipt", r.outputMatches) + chk("The receipt fields rebuild the signed digest", r.digestMatches) + chk("The signature is Beagle's", r.signerMatches) + chk("The job exists on chain", !!r.onChain);
   feed(r.ok ? `Receipt checks out offline. Signer ${short(r.signer)}.` : `Receipt failed: ${r.reasons.join("; ")}.`, r.ok ? "ok" : "bad");
