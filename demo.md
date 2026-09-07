@@ -45,7 +45,7 @@ Say what you are about to click before you click it. Let each animation finish.
 2. **Send Beagle to work.** Say: "Beagle is Agentic ID 383, running inside a TEE sandbox that 0G's attestor provisioned. I'm calling its service with my address." Wait for the seal to slam onto the proof card. Say: "That header is the X-Agent-Proof. The signer matches the AgentSeal registered on chain for agent 383, and it names me as the only one who can redeem it."
 3. **Try a forged proof.** Say: "An impostor changes one hash." Capybara shakes its head. Read the rejection reason from the bubble.
 4. **Submit proof.** Say: "Now the real seal." Coins fly to Beagle. Say: "Capybara rebuilt the digest on chain, recovered the signer, matched getAgentSeal, and paid the seal address. That's a real transaction on Galileo." Click the transaction link if there's time.
-5. **Replay the seal.** Say: "Same seal, second job." Rejected with `seal reused`. Say: "One serve, one seal, one payout."
+5. **Replay the spent seal.** This button only unlocks after step 4, because a seal that has not been paid yet is still valid. Say: "Same seal, second job." Rejected with `seal reused`. Say: "One serve, one seal, one payout."
 
 ### 2:20 Slide 4, proof
 

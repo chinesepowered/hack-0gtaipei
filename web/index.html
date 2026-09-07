@@ -159,7 +159,7 @@
       <div class="step" id="s3"><div class="n">3</div><div>
         <div class="t">Show Capybara the proof</div>
         <div class="d" id="d3"></div>
-        <div class="row"><button class="btn green" id="btnSettle" disabled>Submit proof</button><button class="btn soft-danger" id="btnFake" disabled>Try a forged proof</button><button class="btn soft-danger" id="btnReplay" disabled>Replay the seal</button><span class="status" id="st3"></span></div>
+        <div class="row"><button class="btn green" id="btnSettle" disabled>Submit proof</button><button class="btn soft-danger" id="btnFake" disabled>Try a forged proof</button><button class="btn soft-danger" id="btnReplay" disabled title="Available after the seal has been paid once">Replay the spent seal</button><span class="status" id="st3"></span></div>
       </div></div>
     </section>
 
@@ -275,7 +275,7 @@ $("btnWork").onclick = async () => {
     $("proofBody").innerHTML = `<div class="kv" style="margin-top:0"><div class="k">type</div><div class="v">X-Agent-Proof from the TEE</div><div class="k">agent</div><div class="v">#${r.proof.agentId}</div><div class="k">who may redeem</div><div class="v">${short(r.proof.submitter)}</div><div class="k">exchange hash</div><div class="v">${short(r.proof.taskHash)}</div><div class="k">framework</div><div class="v">${short(r.proof.frameworkHash)}</div><div class="k">valid until</div><div class="v">${new Date(r.proof.deadline*1000).toLocaleTimeString()}</div><div class="k">signature</div><div class="v">${short(r.proof.signature)}</div></div>`;
     feed(`Reply carried X-Agent-Proof. Signer ${short(r.signer)} ${r.sealMatches ? "matches" : "does not match"} getAgentSeal(${r.proof.agentId}).`, r.sealMatches ? "ok" : "bad");
     if (r.answerError) feed(`Beagle's model call failed inside the TEE: ${r.answerError}. The seal is still valid.`, "dim");
-    enable(["btnSettle","btnFake","btnReplay"], true);
+    enable(["btnSettle","btnFake"], true);
   }
   slam(); $("s2").classList.add("done"); status("st2", "delivered with proof", "ok"); beagle("happy"); setTimeout(() => beagle("idle"), 1100);
   say(`Beagle delivered. The proof is <em>stamped</em>.`);
@@ -289,7 +289,7 @@ $("btnSettle").onclick = async () => {
   if (r.status === "success") {
     feed(`Paid. Capybara opened the chest and Beagle got the bounty. ${link(r.txUrl, "See the transaction")}.`, "ok");
     $("s3").classList.add("done"); status("st3", "paid", "ok"); capy("happy"); chest(false); bag("to-beagle"); burst(); setTimeout(() => beagle("happy"), 800);
-    say(`Proof accepted. <em>Beagle got paid.</em>`); enable(["btnFake"], false);
+    say(`Proof accepted. <em>Beagle got paid.</em>`); enable(["btnFake"], false); if (state.mode === "sealed") enable(["btnReplay"], true);
   } else { feed(`Rejected: ${r.error}.`, "bad"); status("st3", r.error, "bad"); capy("sad"); say(`Capybara says no: <em>${r.error}</em>.`); enable(["btnSettle"], true); }
 };
 
@@ -303,7 +303,7 @@ $("btnFake").onclick = async () => {
 };
 
 $("btnReplay").onclick = async () => {
-  enable(["btnReplay"], false); say(`Someone tries to spend the <em>same seal twice</em>…`); feed(`Opening a second job, then replaying the same seal against it.`);
+  enable(["btnReplay"], false); say(`Someone tries to spend the <em>same seal twice</em>…`); feed(`Opening a second job, then submitting the seal that was already paid on job #${state.jobId}.`);
   const j = await post("/api/job", { task: state.task + " (again)", amount: "0.001", mode: "sealed" });
   if (j.error) { feed(j.error, "bad"); return; }
   const r = await post("/api/settle", { mode:"sealed", jobId: j.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof });
