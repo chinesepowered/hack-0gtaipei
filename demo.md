@@ -12,6 +12,7 @@ cd C:\code\hack-0gtaipei
 pnpm start          # server on :3000, prints router + escrow + sealed agent id
 ```
 
+- **Wake the sealed Beagle first:** `node scripts/agentic-start.mjs`. Its TEE container bills the prepaid sandbox balance per minute and the provider stops it at zero. The script tops the balance up from the deployer wallet, starts the container, and waits until it reports running. Run it about 15 minutes before you go on. 0.5 0G of testnet 0G lasts roughly two hours.
 - Open `http://localhost:3000`. The header pills must show `chain 0G Galileo`, `model qwen2.5-omni`, `escrow 0xac8f…`, `agent #383`. If `agent` is missing, the sealed Beagle is offline; demo the key mode only.
 - Run **one full pass in Sealed Beagle mode** right now (lock, work, submit). This warms the attestor, confirms the seal is live, and proves the deployer wallet has gas. Reload the page after.
 - Check the sealed Beagle answers: `curl -s http://8080-e491a14b-8caa-4d44-b57d-54587ad1e9e5.35-225-105-127.sslip.io:4000/hello | head -c 200`. Any JSON is fine.
@@ -58,7 +59,8 @@ Close:
 
 | Symptom | Do this |
 |---|---|
-| Sealed mode fails at "Send Beagle to work" | Switch to **Beagle with a key**. Same three clicks. Say the key-signed receipt commits to the 0G Compute TEE trace, and show the offline checker with "one word changed". |
+| Sealed mode fails at "Send Beagle to work" with "Sandbox not found" | The container stopped. Run `node scripts/agentic-start.mjs`, wait for RUNNING, then `pnpm start` again. Takes about two minutes. |
+| Sealed mode fails at "Send Beagle to work" for any other reason | Switch to **Beagle with a key**. Same three clicks. Say the key-signed receipt commits to the 0G Compute TEE trace, and show the offline checker with "one word changed". |
 | "Lock funds" hangs past 20 seconds | Galileo is slow to return receipts. Wait. The server retries for a minute. |
 | Bubble says `Insufficient balance` in key mode | The testnet Router account ran dry. Deposit at pc.testnet.0g.ai. The sealed mode still works because the seal does not need inference. |
 | Page shows no `agent #383` pill | Sealed Beagle is down. Demo key mode and say the sealed path is in the README with transaction hashes. |

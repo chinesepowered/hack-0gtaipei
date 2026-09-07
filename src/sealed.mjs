@@ -47,6 +47,10 @@ export async function fetchWithProof(path, { method = "GET", body, clientAddress
   });
   const text = await res.text();
   const header = res.headers.get("x-agent-proof");
+  if (!header) {
+    let msg = text.slice(0, 200); try { msg = JSON.parse(text).message || msg; } catch {}
+    throw new Error(`sealed agent answered ${res.status} without X-Agent-Proof: ${msg}`);
+  }
   return { status: res.status, text, proof: parseAgentProof(header), rawHeader: header };
 }
 

@@ -126,6 +126,7 @@ pnpm install
 cp .env.example .env               # ROUTER keys, DEPLOYER_KEY funded on Galileo, AGENT_KEY
 pnpm compile && pnpm deploy         # deploys ProofEscrow and writes ESCROW_ADDRESS
 node scripts/agentic-deploy.mjs     # optional: mint and run a sealed agent through the 0G attestor
+node scripts/agentic-start.mjs      # wake a stopped sealed agent; tops up the sandbox balance if needed
 pnpm start                          # demo at http://localhost:3000, slides at /slides and /slides_cn
 ```
 
