@@ -1,0 +1,22 @@
+{
+  "voice": "Lee Ting Ting (TW)",
+  "model": "eleven_multilingual_v2",
+  "slides": [
+    {
+      "slide": 1,
+      "text": "大家好，這是 Pinky Promise，打勾勾託管。一個只在 AI Agent 證明自己真的做了事之後，才付款的託管合約。Beagle 接單做事，Capybara 看守寶箱，一枚密碼學印章，才能打開它。整個系統建構在 0G 上，今天已經在 Galileo 測試網上線。"
+    },
+    {
+      "slide": 2,
+      "text": "Agent 正在變成經濟參與者。它們接單、收費，還會雇用其他 Agent。每一跳之間，沒有人在看。付款方今天只有兩個壞選項：相信 Agent 的一面之詞，或者相信一個隨時能換模型、改提示詞、捏造答案的營運者。信譽系統也救不了。一份 ERC-8004 生態研究，移除女巫評價之後，百分之八十六有評分的 Agent，完全沒有真實回饋。所以我們說：「我信你」不是安全模型。每一跳都需要證明，而且要有人憑證明付款。"
+    },
+    {
+      "slide": 3,
+      "text": "打勾勾託管是這樣運作的。第一步，客戶把任務雜湊、指定的 Agent 和 0G 代幣，鎖進託管合約，鑰匙由 Capybara 保管。第二步，Beagle 在 0G Compute 上做事，並開啟 verify tee，供應商的 TEE 會對輸入、模型和輸出簽名。第三步，Beagle 是一個 0G Agentic ID，跑在 TEE 裡面。它的每一則回應都蓋上 X-Agent-Proof 印章，簽章金鑰只存在 TEE 內部，連擁有者都拿不到。第四步，Capybara，也就是合約，還原簽章者、比對鏈上的 getAgentSeal，然後打開寶箱。偽造或重放的印章，一律拒絕。最後，收據包會歸檔到 0G Storage。TEE 證明是誰說的，Storage 保存說了什麼，Chain 記錄已經付款。任何人都能不經過我們，取回收據並驗證。"
+    },
+    {
+      "slide": 4,
+      "text": "這一切，今天已經在 Galileo 上線。密封版 Beagle 是 Agentic ID 三八三號，透過 0G 的 attestor 部署，並且在 TEE 內自行註冊了簽章服務。寶箱已經憑真實的 X-Agent-Proof 打開；重放的印章被拒絕，偽造的收據也被拒絕；收據已經歸檔到 0G Storage。四個 0G 元件，四種職責：Compute 證明推理，Agentic ID 證明是誰服務，Chain 付款，Storage 保存收據。憑證明付款，是 Agent 經濟缺少的結算層，而 0G，是每一層都有證明的技術棧。謝謝大家，接下來請看現場 demo。"
+    }
+  ]
+}

@@ -3,3 +3,5 @@ node_modules/
 out/
 *.log
 agentlog.txt
+docs/video/clip*.mp4
+docs/video/list.txt

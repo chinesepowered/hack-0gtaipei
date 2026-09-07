@@ -21,6 +21,10 @@ pnpm start          # server on :3000, prints router + escrow + sealed agent id
 
 Everything in the demo runs on testnet: the escrow and jobs on Galileo, the key-signed Beagle on the testnet Router with qwen2.5-omni. The only piece tied to mainnet is the sealed Beagle's own model key inside its TEE, set at deploy time. That account is empty, so its `/api/answer` text comes back as an error. The seal on that reply is still valid and still pays. Do not bother chatting with it before the demo; it cannot answer.
 
+## Narrated video option
+
+`docs/pitch_cn.mp4` is slides 1 to 4 narrated in Taiwan Mandarin (ElevenLabs, voice Lee Ting Ting), 1080p, 3 minutes 15 seconds. Play it instead of speaking over the slides, then switch to the live demo tab. If you use it, the whole slot is the video plus about 90 seconds of live demo, so agree the timing with the organiser first. Regenerate after any slide change with `node scripts/narrate.mjs` (add `--skip-tts` to reuse the audio, `--voice "Anna Su (TW)"` for the clearer, more neutral backup voice). The narration text lives in `docs/narration_cn.json`.
+
 ## The talk track
 
 ### 0:00 Slide 1, title
