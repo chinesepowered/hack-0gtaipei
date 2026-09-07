@@ -66,6 +66,8 @@ export async function sealedWork({ jobId, task, clientAddress }) {
   }
   if (!result) result = { ...hello, service: "/hello" };
   const outputHash = keccak256(toBytes(result.text));
+  let answer = result.text; try { const j = JSON.parse(result.text); if (j.answer) answer = j.answer; } catch {}
+  let modelTrace = null; try { const j = JSON.parse(result.text); if (j.model || j.provider) modelTrace = { model: j.model, provider: j.provider, teeVerified: j.tee_verified }; } catch {}
   const proof = result.proof;
   let signer = null;
   if (proof) {
@@ -77,5 +79,5 @@ export async function sealedWork({ jobId, task, clientAddress }) {
     });
     try { signer = await recoverMessageAddress({ message: { raw: digest }, signature: proof.signature }); } catch {}
   }
-  return { mode: "sealed", jobId, service: result.service, status: result.status, output: result.text, outputHash, proof, rawHeader: result.rawHeader, signer, expectedSeal: info.agentSeal, sealMatches: signer?.toLowerCase() === info.agentSeal.toLowerCase(), services: services.map((s) => s.path), card };
+  return { mode: "sealed", jobId, service: result.service, status: result.status, output: result.text, answer, modelTrace, outputHash, proof, rawHeader: result.rawHeader, signer, expectedSeal: info.agentSeal, sealMatches: signer?.toLowerCase() === info.agentSeal.toLowerCase(), services: services.map((s) => s.path), card };
 }

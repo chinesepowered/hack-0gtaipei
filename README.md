@@ -40,7 +40,9 @@ Two worker modes are demoed side by side:
 | Sealed Beagle — Agentic ID | `#383` on AgenticID `0x5BB50987521A3fb7Da6Cd6aCC0ad1061D975B24A` |
 | Sealed Beagle — AgentSeal (payout) | `0x9891fa22308e1dc4570a9df51af89f4b1c092c0b` |
 | Sealed Beagle — live `/hello` | `http://8080-e491a14b-8caa-4d44-b57d-54587ad1e9e5.35-225-105-127.sslip.io:4000/hello` |
-| Example: job settled by X-Agent-Proof | tx `0x0daba338aaf048ddc715eec81e01a98fe4500f6bd18c2d60309f1176997aab51` |
+| Sealed Beagle — sealed task service | `POST …:4000/api/answer` `{"task":"…"}` (the agent registered this itself from inside the TEE) |
+| Example: job #5 settled by X-Agent-Proof over `/api/answer` | tx `0x3d212b81363d7b9452074d96edf12418091e246486628208b34e11c0aab87552` |
+| Example: job #3 settled by X-Agent-Proof over `/hello` | tx `0x0daba338aaf048ddc715eec81e01a98fe4500f6bd18c2d60309f1176997aab51` |
 | Example: replayed seal rejected | revert `seal reused` |
 | Example: key-signed receipt settled | tx `0xe7f46e03efa7300c519b92881f3ae36520713e047cc1ce5883d197a628947378` (escrow v1) |
 

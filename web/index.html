@@ -161,8 +161,8 @@ $("btnWork").onclick = async () => {
     const r = await post("/api/work", { jobId: state.jobId, task: state.task, mode: "sealed" });
     if (r.error || !r.proof) { log("✗ "+(r.error||"no X-Agent-Proof header"), "bad"); face("beagle","🐶"); enable(["btnWork"], true); return; }
     state.sealed = r; state.output = r.output;
-    $("output").textContent = r.output;
-    kv($("trace"), { service: r.service, "seal signer": short(r.signer), "on-chain seal": short(r.expectedSeal), "seal matches": r.sealMatches, services: r.services.join(", ") });
+    $("output").textContent = r.answer || r.output;
+    kv($("trace"), { service: r.service, ...(r.modelTrace ? { model: r.modelTrace.model, provider: short(r.modelTrace.provider), tee_verified: r.modelTrace.teeVerified } : {}), "seal signer": short(r.signer), "on-chain seal": short(r.expectedSeal), "seal matches": r.sealMatches, services: r.services.join(", ") });
     kv($("receipt"), { header: "X-Agent-Proof", agent_id: r.proof.agentId, submitter: short(r.proof.submitter), task_hash: short(r.proof.taskHash), framework_hash: short(r.proof.frameworkHash), deadline: new Date(r.proof.deadline*1000).toLocaleTimeString(), signature: short(r.proof.signature) });
     log(`✓ response carried X-Agent-Proof · signer ${short(r.signer)} == getAgentSeal(${r.proof.agentId}) → ${r.sealMatches}`, r.sealMatches ? "ok":"bad");
     log(`  seal names submitter ${short(r.proof.submitter)} — only that client can redeem it`, "dim");
