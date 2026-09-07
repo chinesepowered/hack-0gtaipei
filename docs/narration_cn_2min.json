@@ -1,0 +1,22 @@
+{
+  "voice": "Lee Ting Ting (TW)",
+  "model": "eleven_multilingual_v2",
+  "slides": [
+    {
+      "slide": 1,
+      "text": "大家好，這是 Pinky Promise，打勾勾託管。一個只在 AI Agent 證明自己真的做了事之後，才付款的託管合約。Beagle 做事，Capybara 看守寶箱，一枚密碼學印章才能打開它。"
+    },
+    {
+      "slide": 2,
+      "text": "Agent 正在接單、收費、雇用其他 Agent，而每一跳之間沒有人在看。付款方只能相信 Agent 的一面之詞，或者相信隨時能換模型、捏造答案的營運者。信譽也救不了：移除女巫評價後，百分之八十六有評分的 Agent 沒有真實回饋。「我信你」不是安全模型，每一跳都需要證明。"
+    },
+    {
+      "slide": 3,
+      "text": "運作方式有四步。客戶把賞金鎖進託管合約。Beagle 在 0G Compute 上做事，TEE 對推理簽名。Beagle 是一個 0G Agentic ID，跑在 TEE 裡，每一則回應都蓋上 X-Agent-Proof 印章，金鑰連擁有者都拿不到。合約比對鏈上的 getAgentSeal 之後打開寶箱，偽造或重放一律拒絕，收據再歸檔到 0G Storage。TEE 證明是誰說的，Storage 保存說了什麼，Chain 記錄已經付款。"
+    },
+    {
+      "slide": 4,
+      "text": "這一切今天已經在 Galileo 上線。密封版 Beagle 是 Agentic ID 三八三號，寶箱已經憑真實印章打開，重放與偽造都被拒絕，收據已歸檔到 0G Storage。四個 0G 元件，四種職責。憑證明付款，是 Agent 經濟缺少的結算層。謝謝大家，接下來請看現場 demo。"
+    }
+  ]
+}

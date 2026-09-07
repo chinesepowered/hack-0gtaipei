@@ -4,4 +4,4 @@ out/
 *.log
 agentlog.txt
 docs/video/clip*.mp4
-docs/video/list.txt
+docs/video/list*.txt

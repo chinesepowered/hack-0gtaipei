@@ -4,11 +4,14 @@ import { execFileSync } from "node:child_process";
 import ffmpegPath from "ffmpeg-static";
 
 // Builds docs/pitch_cn.mp4: one screenshot per Chinese slide, narrated in Mandarin by ElevenLabs.
-// Usage: node scripts/narrate.mjs [--voice "Name"] [--skip-tts]
+// Usage: node scripts/narrate.mjs [--script docs/narration_cn.json] [--out docs/pitch_cn.mp4] [--voice "Name"] [--skip-tts]
 const KEY = process.env.ELEVENLABS_API_KEY;
 const args = process.argv.slice(2);
 const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null; };
-const script = JSON.parse(readFileSync("docs/narration_cn.json", "utf8"));
+const scriptPath = opt("--script") || "docs/narration_cn.json";
+const outFile = opt("--out") || "docs/pitch_cn.mp4";
+const tag = scriptPath.replace(/^.*narration_cn/, "").replace(/\.json$/, "") || "";
+const script = JSON.parse(readFileSync(scriptPath, "utf8"));
 const voiceName = opt("--voice") || script.voice;
 const model = script.model || "eleven_multilingual_v2";
 const OUT = "docs/video"; mkdirSync(OUT, { recursive: true });
@@ -23,7 +26,7 @@ console.log("voice", voice.name, voice.voice_id, "model", model);
 
 // 2. TTS per slide
 for (const s of script.slides) {
-  const mp3 = `${OUT}/slide${s.slide}.mp3`;
+  const mp3 = `${OUT}/slide${s.slide}${tag}.mp3`;
   if (args.includes("--skip-tts") && existsSync(mp3)) { console.log("keep", mp3); continue; }
   const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice.voice_id}?output_format=mp3_44100_128`, {
     method: "POST", headers: { "xi-api-key": KEY, "content-type": "application/json" },
@@ -48,13 +51,13 @@ const duration = (f) => { try { execFileSync(ffmpegPath, ["-i", f], { stdio: ["i
 const list = [];
 let total = 0;
 for (const s of script.slides) {
-  const d = duration(`${OUT}/slide${s.slide}.mp3`) + PAD; total += d;
-  const clip = `${OUT}/clip${s.slide}.mp4`;
-  execFileSync(ffmpegPath, ["-y", "-loglevel", "error", "-loop", "1", "-framerate", "30", "-i", `${OUT}/slide${s.slide}.png`, "-i", `${OUT}/slide${s.slide}.mp3`,
+  const d = duration(`${OUT}/slide${s.slide}${tag}.mp3`) + PAD; total += d;
+  const clip = `${OUT}/clip${s.slide}${tag}.mp4`;
+  execFileSync(ffmpegPath, ["-y", "-loglevel", "error", "-loop", "1", "-framerate", "30", "-i", `${OUT}/slide${s.slide}.png`, "-i", `${OUT}/slide${s.slide}${tag}.mp3`,
     "-t", d.toFixed(2), "-vf", `scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2,format=yuv420p`,
     "-c:v", "libx264", "-preset", "medium", "-tune", "stillimage", "-crf", "20", "-c:a", "aac", "-b:a", "160k", "-af", `apad=pad_dur=${PAD}`, "-shortest", clip], { stdio: "inherit" });
-  list.push(`file 'clip${s.slide}.mp4'`); console.log("clip", clip, d.toFixed(1) + "s");
+  list.push(`file 'clip${s.slide}${tag}.mp4'`); console.log("clip", clip, d.toFixed(1) + "s");
 }
-writeFileSync(`${OUT}/list.txt`, list.join("\n"));
-execFileSync(ffmpegPath, ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", `${OUT}/list.txt`, "-c", "copy", "docs/pitch_cn.mp4"], { stdio: "inherit" });
-console.log(`done: docs/pitch_cn.mp4, ${total.toFixed(0)}s total`);
+writeFileSync(`${OUT}/list${tag}.txt`, list.join("\n"));
+execFileSync(ffmpegPath, ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", `${OUT}/list${tag}.txt`, "-c", "copy", outFile], { stdio: "inherit" });
+console.log(`done: ${outFile}, ${total.toFixed(0)}s total`);

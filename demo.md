@@ -23,7 +23,14 @@ Everything in the demo runs on testnet: the escrow and jobs on Galileo, the key-
 
 ## Narrated video option
 
-`docs/pitch_cn.mp4` is slides 1 to 4 narrated in Taiwan Mandarin (ElevenLabs, voice Lee Ting Ting), 1080p, 3 minutes 15 seconds. Play it instead of speaking over the slides, then switch to the live demo tab. If you use it, the whole slot is the video plus about 90 seconds of live demo, so agree the timing with the organiser first. Regenerate after any slide change with `node scripts/narrate.mjs` (add `--skip-tts` to reuse the audio, `--voice "Anna Su (TW)"` for the clearer, more neutral backup voice). The narration text lives in `docs/narration_cn.json`.
+Two cuts, both slides 1 to 4 narrated in Taiwan Mandarin (ElevenLabs, voice Lee Ting Ting), 1080p:
+
+| File | Length | Use when |
+|---|---|---|
+| `docs/pitch_cn.mp4` | 3:15 | The slot allows the video plus about 90 seconds of live demo |
+| `docs/pitch_cn_2min.mp4` | 1:53 | A strict three-minute slot: video, then about 60 seconds of live demo |
+
+Play one instead of speaking over the slides, then switch to the live demo tab. The short cut keeps every claim and drops the elaboration; the narration text for each is in `docs/narration_cn.json` and `docs/narration_cn_2min.json`. Regenerate after any slide change with `node scripts/narrate.mjs` for the full cut, or `node scripts/narrate.mjs --script docs/narration_cn_2min.json --out docs/pitch_cn_2min.mp4` for the short one. Add `--skip-tts` to reuse the audio, `--voice "Anna Su (TW)"` for the clearer, more neutral backup voice.
 
 ## The talk track
 
