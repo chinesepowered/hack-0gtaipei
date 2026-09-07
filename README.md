@@ -91,7 +91,7 @@ The key-signed mode replaces the TEE box with a local agent process that calls t
 
 | Thing | Value |
 |---|---|
-| ProofEscrow | `0xac8faab5e74824fb24701e4ef2733754854efb95` |
+| ProofEscrow, source verified on chainscan | [`0xac8faab5e74824fb24701e4ef2733754854efb95`](https://chainscan-galileo.0g.ai/address/0xac8faab5e74824fb24701e4ef2733754854efb95) |
 | AgenticID contract used as seal domain | `0x5BB50987521A3fb7Da6Cd6aCC0ad1061D975B24A` |
 | Sealed Beagle, Agentic ID | `#383` |
 | Sealed Beagle, AgentSeal and payout address | `0x9891fa22308e1dc4570a9df51af89f4b1c092c0b` |

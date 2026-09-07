@@ -73,5 +73,6 @@ Its `/api/answer` returns an error string right now because its model key on the
 - **Why not just trust the TEE inference proof?** It proves the model produced the output. It does not prove which agent served which client. The Agentic ID seal adds the "who", and the escrow needs the "who" to pay.
 - **Can the owner fake a seal?** No. The AgentSeal key is derived inside the TEE by 0G's KMS and never leaves. The owner can start, stop, and reset the agent, but not sign as it.
 - **What stops the agent from re-using a seal?** The escrow stores every seal digest it has paid. A second submission reverts with `seal reused`. The reputation registry does the same with a nonce.
+- **Can we read the contract?** Yes, the source is verified on chainscan: https://chainscan-galileo.0g.ai/address/0xac8faab5e74824fb24701e4ef2733754854efb95. `settleWithSeal` is about 15 lines.
 - **What is on chain?** `ProofEscrow` at `0xac8faab5e74824fb24701e4ef2733754854efb95`, the AgenticID contract at `0x5BB50987521A3fb7Da6Cd6aCC0ad1061D975B24A`, and agent 383's seal address `0x9891fa22308e1dc4570a9df51af89f4b1c092c0b`.
 - **Business model?** A fee on settlement, or per-stamp pricing. Volume scales with agent calls.
