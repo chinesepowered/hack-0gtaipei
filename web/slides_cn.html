@@ -46,6 +46,18 @@
   .receipt { background:var(--card); border-radius:24px; padding:24px 26px; box-shadow:var(--shadow); font-weight:700; font-size:15.5px; line-height:1.8; position:relative; align-self:center; }
   .receipt .ok { color:#3B8F4E; } .receipt .bad { color:#B4432F; } .receipt .dim { color:var(--inkSoft); font-weight:500; }
   .receipt .seal { position:absolute; right:-22px; top:-30px; transform:rotate(-12deg); }
+  /* 5, 6 */
+  .s5 { align-content:center; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .col { background:var(--card); border-radius:24px; padding:24px 26px; box-shadow:var(--shadow); }
+  .col h3 { font-weight:900; font-size:clamp(22px,2.4vw,32px); margin:0 0 10px; display:flex; align-items:center; gap:14px; }
+  .col p { font-size:clamp(15px,1.4vw,20px); margin:8px 0; max-width:none; }
+  .col .ans { font-weight:800; color:var(--meadowDeep); }
+  .s6 { align-content:center; }
+  .faq { display:grid; grid-template-columns:1fr 1fr; gap:16px 28px; }
+  .qa { background:var(--card); border-radius:20px; padding:18px 20px; box-shadow:var(--shadow); }
+  .qa .q { font-weight:800; font-size:clamp(15px,1.45vw,21px); margin-bottom:6px; color:var(--orangeDeep); }
+  .qa .a { font-size:clamp(14px,1.25vw,18px); line-height:1.45; max-width:none; }
 </style>
 </head>
 <body>
@@ -74,7 +86,7 @@
   </div>
   <div class="quote">「我信你」不是安全模型。<br><br><span class="orange">每一跳都需要證明。</span>而且要有人憑證明付款。</div>
   <div class="beagle" id="b2"></div>
-  <div class="foot"><span>問題</span><span>2 / 4</span></div>
+  <div class="foot"><span>問題</span><span>2 / 6</span></div>
 </section>
 
 <section class="slide s3">
@@ -86,7 +98,7 @@
     <div class="box"><div class="n">4</div><div class="t">Capybara 憑章放款</div><div class="d">合約還原簽章者、比對 getAgentSeal 後打開寶箱。偽造或重放的印章一律拒絕。</div><div class="z">settleWithSeal，與 ERC-8004 信譽同一摘要</div></div>
   </div>
   <div class="rule">任何人都能離線驗證印章，免 gas。同一枚印章既能結算付款，也能累積鏈上信譽。</div>
-  <div class="foot"><span>方案</span><span>3 / 4</span></div>
+  <div class="foot"><span>方案</span><span>3 / 6</span></div>
 </section>
 
 <section class="slide s4">
@@ -109,7 +121,41 @@
     <div class="bad">偽造收據遭拒：bad proof</div>
     <div class="dim" style="margin-top:8px">Escrow 0xac8f…fb95，chain 16602</div>
   </div>
-  <div class="foot"><span>證明</span><span>4 / 4</span></div>
+  <div class="foot"><span>證明</span><span>4 / 6</span></div>
+</section>
+
+<section class="slide s5">
+  <h2>為什麼有兩隻 Beagle</h2>
+  <div class="two">
+    <div class="col">
+      <h3><span id="k5"></span>帶鑰匙的 Beagle</h3>
+      <p>一個普通的 Agent 程式，持有我們自己產生的私鑰。</p>
+      <p>用 verify_tee 呼叫 0G Compute，然後簽一張收據：這把鑰匙為這個任務產出了這個答案，並附上 TEE 的推理證明。</p>
+      <p>TEE 證明模型誠實地跑過了。但沒有任何東西證明這把鑰匙屬於一個真實、未被竄改的 Agent。誰拿到鑰匙檔，誰就能簽任何東西。</p>
+      <p class="ans">回答的是：真的有模型產出這個答案嗎？</p>
+    </div>
+    <div class="col">
+      <h3><span id="s5i"></span>密封版 Beagle，Agentic ID #383</h3>
+      <p>跑在 0G attestor 佈建的 TEE 沙箱裡。簽章金鑰由 0G 的金鑰服務在 TEE 內部衍生，連擁有者都讀不到。</p>
+      <p>每一則回應都蓋上 X-Agent-Proof，記載是哪個 Agent、哪個執行環境、哪一次交換、誰可以兌現。託管合約拿它去比對鏈上的 getAgentSeal。</p>
+      <p class="ans">回答的是：是這個特定、未被竄改的 Agent 服務了這個特定客戶嗎？</p>
+    </div>
+  </div>
+  <div class="rule">帶鑰匙模式是今天任何 Agent 都能用的基準線；密封模式是 0G 身份層額外提供的，也是託管合約能安全放款所需要的。</div>
+  <div class="foot"><span>兩種模式</span><span>5 / 6</span></div>
+</section>
+
+<section class="slide s6">
+  <h2>預期會被問到的問題</h2>
+  <div class="faq">
+    <div class="qa"><div class="q">為什麼不直接相信 TEE 的推理證明？</div><div class="a">它證明模型產出了這段輸出，但不證明是哪個 Agent 服務了哪個客戶。印章補上「是誰」，而託管合約需要「是誰」才能付款。</div></div>
+    <div class="qa"><div class="q">擁有者能偽造印章嗎？</div><div class="a">不能。AgentSeal 金鑰由 0G 的 KMS 在 TEE 內衍生，從未離開。擁有者可以啟動、停止、重置 Agent，但無法以它的身份簽名。</div></div>
+    <div class="qa"><div class="q">怎麼防止印章被重複使用？</div><div class="a">託管合約記錄每一枚已付款的印章摘要，第二次提交會以「seal reused」回滾。信譽登錄合約用 nonce 做同樣的事。</div></div>
+    <div class="qa"><div class="q">不靠我們，任何人都能驗證嗎？</div><div class="a">可以，離線且免 gas。從標頭重建摘要、還原簽章者、和鏈上的 getAgentSeal 比對。合約原始碼已在 chainscan 驗證。</div></div>
+    <div class="qa"><div class="q">鏈上實際有什麼？</div><div class="a">ProofEscrow 在 0xac8f…fb95，AgenticID 合約在 0x5BB5…B24A，Agent 383 的印章地址 0x9891…2c0b，全部在 0G Galileo。</div></div>
+    <div class="qa"><div class="q">怎麼賺錢？</div><div class="a">結算手續費，或按印章計價。交易量隨 Agent 呼叫量成長。同一枚印章也能寫入 ERC-8004 信譽，讓評價自帶收據。</div></div>
+  </div>
+  <div class="foot"><span>問答</span><span>6 / 6</span></div>
 </section>
 
 <div class="nav">← → 切換</div>
@@ -119,6 +165,7 @@ const $ = (id) => document.getElementById(id);
 $("bg1").innerHTML = sceneSVG(1600, 900);
 $("b1").innerHTML = beagleSVG("happy", 300); $("c1").innerHTML = capySVG("idle", 300); $("ch1").innerHTML = chestSVG(true, 190); $("bag1").innerHTML = bagSVG(90);
 $("b2").innerHTML = beagleSVG("sad", 220); $("seal4").innerHTML = sealSVG(96);
+$("k5").innerHTML = beagleSVG("idle", 64); $("s5i").innerHTML = sealSVG(48);
 const slides = [...document.querySelectorAll(".slide")]; let i = 0;
 const show = (n) => { i = (n + slides.length) % slides.length; slides.forEach((s, k) => s.classList.toggle("on", k === i)); };
 const q = Number(new URLSearchParams(location.search).get("slide")); if (q >= 1 && q <= slides.length) show(q - 1);

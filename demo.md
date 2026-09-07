@@ -78,3 +78,12 @@ Its `/api/answer` returns an error string right now because its model key on the
 - **Can we read the contract?** Yes, the source is verified on chainscan: https://chainscan-galileo.0g.ai/address/0xac8faab5e74824fb24701e4ef2733754854efb95. `settleWithSeal` is about 15 lines.
 - **What is on chain?** `ProofEscrow` at `0xac8faab5e74824fb24701e4ef2733754854efb95`, the AgenticID contract at `0x5BB50987521A3fb7Da6Cd6aCC0ad1061D975B24A`, and agent 383's seal address `0x9891fa22308e1dc4570a9df51af89f4b1c092c0b`.
 - **Business model?** A fee on settlement, or per-stamp pricing. Volume scales with agent calls.
+
+## Why there are two Beagles
+
+Demo the sealed one. Keep the key one as the fallback.
+
+- **Beagle with a key** is an ordinary agent process on the laptop. It holds a private key we generated, calls the 0G Compute Router with `verify_tee`, and signs a receipt saying "this key produced this answer for this job, and here is the TEE trace for the inference." The TEE proves the model ran honestly. Nothing proves the key belongs to a real, unmodified agent. Whoever holds the key file can sign anything.
+- **Sealed Beagle** is 0G Agentic ID #383. Its code runs inside a TEE sandbox that 0G's attestor provisioned, and its signing key was derived inside that TEE by 0G's key service. Nobody outside can read it, including the owner. Every reply is stamped by the sealed proxy with an X-Agent-Proof that names which agent, which runtime, which exact exchange, and who may redeem it. The escrow checks that stamp against `getAgentSeal(383)` on chain.
+
+Key mode answers "did a model really produce this." Sealed mode also answers "did this specific agent, unmodified, serve this specific client." The escrow needs the second to pay safely. If a judge asks why both exist: key mode is the baseline any agent can use today, sealed mode is what 0G's identity layer adds on top.

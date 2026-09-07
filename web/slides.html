@@ -49,6 +49,18 @@
   .receipt { background:var(--card); border-radius:24px; padding:24px 26px; box-shadow:var(--shadow); font-weight:700; font-size:15.5px; line-height:1.7; position:relative; align-self:center; }
   .receipt .ok { color:#3B8F4E; } .receipt .bad { color:#B4432F; } .receipt .dim { color:var(--inkSoft); font-weight:600; }
   .receipt .seal { position:absolute; right:-22px; top:-30px; transform:rotate(-12deg); }
+  /* 5, 6 */
+  .s5 { align-content:center; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .col { background:var(--card); border-radius:24px; padding:24px 26px; box-shadow:var(--shadow); }
+  .col h3 { font-family:var(--display); font-weight:600; font-size:clamp(22px,2.4vw,32px); margin:0 0 10px; display:flex; align-items:center; gap:14px; }
+  .col p { font-size:clamp(15px,1.4vw,20px); margin:8px 0; max-width:none; }
+  .col .ans { font-weight:800; color:var(--meadowDeep); }
+  .s6 { align-content:center; }
+  .faq { display:grid; grid-template-columns:1fr 1fr; gap:16px 28px; }
+  .qa { background:var(--card); border-radius:20px; padding:18px 20px; box-shadow:var(--shadow); }
+  .qa .q { font-weight:800; font-size:clamp(15px,1.45vw,21px); margin-bottom:6px; color:var(--orangeDeep); }
+  .qa .a { font-size:clamp(14px,1.25vw,18px); line-height:1.45; max-width:none; }
 </style>
 </head>
 <body>
@@ -77,7 +89,7 @@
   </div>
   <div class="quote">"I trust you" is not a security model.<br><br><span class="orange">Every hop needs a proof.</span> And someone has to pay on it.</div>
   <div class="beagle" id="b2"></div>
-  <div class="foot"><span>The problem</span><span>2 / 4</span></div>
+  <div class="foot"><span>The problem</span><span>2 / 6</span></div>
 </section>
 
 <section class="slide s3">
@@ -89,7 +101,7 @@
     <div class="box"><div class="n">4</div><div class="t">Capybara pays on proof</div><div class="d">The contract recovers the signer, matches getAgentSeal, and opens the chest. Forged or replayed seals are refused.</div><div class="z">settleWithSeal, same digest as ERC-8004 reputation</div></div>
   </div>
   <div class="rule">Anyone can verify a seal offline with no gas. The same seal settles payment and earns on-chain reputation.</div>
-  <div class="foot"><span>The solution</span><span>3 / 4</span></div>
+  <div class="foot"><span>The solution</span><span>3 / 6</span></div>
 </section>
 
 <section class="slide s4">
@@ -112,7 +124,41 @@
     <div class="bad">Forged receipt refused: bad proof</div>
     <div class="dim" style="margin-top:8px">Escrow 0xac8f…fb95 on chain 16602</div>
   </div>
-  <div class="foot"><span>The proof</span><span>4 / 4</span></div>
+  <div class="foot"><span>The proof</span><span>4 / 6</span></div>
+</section>
+
+<section class="slide s5">
+  <h2>Why there are two Beagles</h2>
+  <div class="two">
+    <div class="col">
+      <h3><span id="k5"></span>Beagle with a key</h3>
+      <p>An ordinary agent process holding a private key we generated.</p>
+      <p>Calls 0G Compute with verify_tee and signs a receipt: this key produced this answer for this job, with the TEE trace attached.</p>
+      <p>The TEE proves the model ran honestly. Nothing proves the key belongs to a real, unmodified agent. Whoever holds the key file can sign anything.</p>
+      <p class="ans">Answers: did a model really produce this?</p>
+    </div>
+    <div class="col">
+      <h3><span id="s5i"></span>Sealed Beagle, Agentic ID #383</h3>
+      <p>Runs inside a TEE sandbox provisioned by 0G's attestor. Its signing key was derived inside that TEE by 0G's key service. Not even the owner can read it.</p>
+      <p>Every reply is stamped with an X-Agent-Proof naming the agent, the runtime, the exact exchange, and who may redeem it. The escrow checks it against getAgentSeal on chain.</p>
+      <p class="ans">Answers: did this specific agent, unmodified, serve this specific client?</p>
+    </div>
+  </div>
+  <div class="rule">Key mode is the baseline any agent can use today. Sealed mode is what 0G's identity layer adds, and it is what an escrow needs to pay safely.</div>
+  <div class="foot"><span>Two modes</span><span>5 / 6</span></div>
+</section>
+
+<section class="slide s6">
+  <h2>Questions we expect</h2>
+  <div class="faq">
+    <div class="qa"><div class="q">Why not just trust the TEE inference proof?</div><div class="a">It proves the model produced the output. It does not prove which agent served which client. The seal adds the who, and the escrow needs the who to pay.</div></div>
+    <div class="qa"><div class="q">Can the owner fake a seal?</div><div class="a">No. The AgentSeal key is derived inside the TEE by 0G's KMS and never leaves. The owner can start, stop, and reset the agent, but cannot sign as it.</div></div>
+    <div class="qa"><div class="q">What stops a seal from being reused?</div><div class="a">The escrow records every seal digest it has paid. A second submission reverts with "seal reused". The reputation registry does the same with a nonce.</div></div>
+    <div class="qa"><div class="q">Can anyone verify without us?</div><div class="a">Yes, offline and with no gas. Rebuild the digest from the header, recover the signer, compare with getAgentSeal on chain. The contract source is verified on chainscan.</div></div>
+    <div class="qa"><div class="q">What is actually on chain?</div><div class="a">ProofEscrow at 0xac8f…fb95, the AgenticID contract at 0x5BB5…B24A, and agent 383's seal address 0x9891…2c0b, all on 0G Galileo.</div></div>
+    <div class="qa"><div class="q">How does this make money?</div><div class="a">A fee on settlement, or per-stamp pricing. Volume scales with agent calls. The same seal also feeds ERC-8004 reputation, so reviews come with receipts.</div></div>
+  </div>
+  <div class="foot"><span>Questions</span><span>6 / 6</span></div>
 </section>
 
 <div class="nav">← → to move</div>
@@ -122,6 +168,7 @@ const $ = (id) => document.getElementById(id);
 $("bg1").innerHTML = sceneSVG(1600, 900);
 $("b1").innerHTML = beagleSVG("happy", 300); $("c1").innerHTML = capySVG("idle", 300); $("ch1").innerHTML = chestSVG(true, 190); $("bag1").innerHTML = bagSVG(90);
 $("b2").innerHTML = beagleSVG("sad", 220); $("seal4").innerHTML = sealSVG(96);
+$("k5").innerHTML = beagleSVG("idle", 64); $("s5i").innerHTML = sealSVG(48);
 const slides = [...document.querySelectorAll(".slide")]; let i = 0;
 const show = (n) => { i = (n + slides.length) % slides.length; slides.forEach((s, k) => s.classList.toggle("on", k === i)); };
 const q = Number(new URLSearchParams(location.search).get("slide")); if (q >= 1 && q <= slides.length) show(q - 1);

@@ -5,7 +5,7 @@
 Beagle is the worker agent. Capybara is the escrow. One seal moves the coins.
 
 - **Demo:** `pnpm start`, then open `http://localhost:3000`. The stage script is in [demo.md](demo.md).
-- **Pitch:** `/slides` (English) and `/slides_cn` (Traditional Chinese), four slides, arrow keys to move.
+- **Pitch:** `/slides` (English) and `/slides_cn` (Traditional Chinese), six slides, arrow keys to move. Slides 5 and 6 are the two-modes comparison and the expected questions, for Q&A.
 
 ## The problem
 
