@@ -5,319 +5,316 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Pinky Promise</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --vault: #163A31; --vault-2: #1E4A3E; --vault-3: #2E6B5A;
-    --paper: #F4EAD3; --paper-2: #E9DDC0; --ink: #1E1A17; --ink-2: #5B5248;
-    --gold: #F2B53A; --gold-2: #C98D1E; --wax: #D8432F; --mint: #5FD3A6; --sky: #5AB0F0;
-    --display: "Silkscreen", ui-monospace, monospace;
-    --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --cream:#FFF6EC; --card:#FFFDF9; --cardAlt:#FBEFDE; --sand:#F5E4CA; --line:#EDDFC9; --ink:#33261A; --inkSoft:#8A7660;
+    --orange:#E8813A; --orangeDeep:#C25E1E; --meadow:#6FA86A; --meadowDeep:#4E8A52; --gold:#F5C453; --goldDeep:#DFA32B;
+    --blush:#F5A28C; --danger:#E26D5A; --success:#63B975; --sky:#7EC3E0;
+    --display:"Fredoka", "Nunito", sans-serif; --body:"Nunito", ui-sans-serif, system-ui, sans-serif;
+    --shadow: 0 10px 30px rgba(51,38,26,.08), 0 2px 6px rgba(51,38,26,.05);
   }
-  * { box-sizing: border-box; }
-  html { background: var(--vault); }
-  body { margin: 0; font-family: var(--sans); color: var(--ink); background: var(--vault); font-size: 15px; line-height: 1.45; }
-  a { color: inherit; }
-  button { font: inherit; cursor: pointer; }
-  button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  * { box-sizing:border-box; }
+  html { background:var(--cream); }
+  body { margin:0; font-family:var(--body); color:var(--ink); background:var(--cream); font-size:15px; line-height:1.5; }
+  a { color:var(--orangeDeep); }
+  button { font:inherit; cursor:pointer; }
+  button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
 
-  /* ─── top bar ─── */
-  .top { display: flex; align-items: baseline; gap: 18px; padding: 18px 28px 0; color: var(--paper); flex-wrap: wrap; }
-  .top h1 { font-family: var(--display); font-weight: 700; font-size: 22px; margin: 0; letter-spacing: 0.02em; }
-  .top .tag { color: #B7CEC4; font-size: 13px; }
-  .top .net { margin-left: auto; font-family: var(--mono); font-size: 12px; color: #B7CEC4; display: flex; gap: 16px; flex-wrap: wrap; }
-  .top .net b { color: var(--gold); font-weight: 500; }
+  .wrap { max-width:1180px; margin:0 auto; padding:22px 24px 48px; }
+  header { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+  header h1 { font-family:var(--display); font-weight:600; font-size:30px; margin:0; line-height:1; }
+  header .sub { color:var(--inkSoft); font-size:14px; margin-top:4px; }
+  .pills { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
+  .pill { background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:7px 12px; font-size:13px; font-weight:700; color:var(--ink); display:inline-flex; align-items:center; gap:6px; }
+  .pill span { color:var(--inkSoft); font-weight:600; }
+  .pill a { text-decoration:none; color:var(--ink); }
 
-  /* ─── stage ─── */
-  .stage { position: relative; margin: 14px 28px 0; height: 272px; border: 4px solid var(--vault-3); background:
-      repeating-linear-gradient(0deg, transparent 0 22px, rgba(255,255,255,.025) 22px 24px),
-      repeating-linear-gradient(90deg, transparent 0 22px, rgba(255,255,255,.025) 22px 24px), var(--vault-2);
-    image-rendering: pixelated; overflow: hidden; }
-  .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: var(--vault-3); border-top: 4px solid #3E836E; }
-  .actor { position: absolute; bottom: 44px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .actor svg { display: block; }
-  .actor .name { font-family: var(--display); font-size: 12px; color: var(--paper); }
-  .actor .name small { display: block; font-family: var(--sans); font-size: 11px; color: #B7CEC4; margin-top: 2px; }
-  #beagleActor { left: 16%; }
-  #capyActor { right: 12%; }
-  #vaultActor { right: 21.5%; bottom: 60px; }
-  .actor.working svg { animation: bob .8s steps(2) infinite; }
-  .actor.happy svg { animation: hop .45s steps(3) 2; }
-  .actor.sad svg { animation: shake .4s steps(4) 2; }
-  @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
-  @keyframes hop { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-14px) } }
-  @keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
-  #bag { position: absolute; bottom: 62px; left: 45%; z-index: 2; transition: left .9s steps(9), transform .3s; }
-  #bag.in-vault { left: 72%; transform: scale(.7); }
-  #bag.to-beagle { left: 22%; }
-  #bag.hidden { visibility: hidden; }
-  .caption { position: absolute; top: 14px; left: 18px; right: 18px; font-family: var(--display); font-size: 13px; color: var(--paper); text-shadow: 0 2px 0 #0d2620; }
-  .caption em { font-style: normal; color: var(--gold); }
-  .coin-burst { position: absolute; bottom: 60px; left: 30%; pointer-events: none; }
-  .coin-burst span { position: absolute; animation: fly .9s steps(6) forwards; }
-  @keyframes fly { 0% { transform: translate(0,0); opacity: 1 } 100% { transform: translate(var(--dx), -70px); opacity: 0 } }
+  /* scene */
+  .scene { position:relative; height:330px; border-radius:28px; overflow:hidden; box-shadow:var(--shadow); }
+  .scene .bg { position:absolute; inset:0; }
+  .actor { position:absolute; bottom:42px; transition: transform .35s; }
+  .actor svg { display:block; }
+  #beagle { left:9%; }
+  #chest { left:47%; bottom:58px; }
+  #capy { right:7%; }
+  .actor.working { animation: bob 1s ease-in-out infinite; }
+  .actor.happy { animation: hop .5s ease-out 2; }
+  .actor.sad { animation: shake .45s ease-in-out 2; }
+  @keyframes bob { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-8px) } }
+  @keyframes hop { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-18px) } }
+  @keyframes shake { 0%,100% { transform:translateX(0) } 25% { transform:translateX(-7px) } 75% { transform:translateX(7px) } }
+  .nameplate { position:absolute; bottom:8px; font-weight:800; font-size:13px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.25); }
+  .nameplate small { display:block; font-weight:600; font-size:11.5px; opacity:.9; }
+  #bag { position:absolute; bottom:76px; left:31%; transition:left .9s cubic-bezier(.4,0,.2,1), transform .3s, opacity .3s; }
+  #bag.in-chest { left:50%; transform:scale(.6); opacity:0; }
+  #bag.to-beagle { left:18%; }
+  #bag.hidden { opacity:0; }
+  .bubble { position:absolute; top:18px; left:50%; transform:translateX(-50%); background:var(--card); color:var(--ink); border-radius:18px; padding:10px 16px; font-weight:700; font-size:15px; box-shadow:var(--shadow); max-width:70%; text-align:center; }
+  .bubble::after { content:""; position:absolute; left:50%; bottom:-9px; width:18px; height:18px; background:var(--card); transform:translateX(-50%) rotate(45deg); border-radius:3px; }
+  .bubble em { font-style:normal; color:var(--orangeDeep); }
+  .burst { position:absolute; bottom:96px; left:22%; pointer-events:none; }
+  .burst span { position:absolute; animation: fly .9s ease-out forwards; }
+  @keyframes fly { 0% { transform:translate(0,0); opacity:1 } 100% { transform:translate(var(--dx), -80px) rotate(200deg); opacity:0 } }
 
-  /* ─── body ─── */
-  .body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 22px; padding: 22px 28px 40px; }
-  @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .stage { height: 220px; } #beagleActor { left: 8%; } #capyActor { right: 6%; } #vaultActor { right: 18%; } }
+  /* layout */
+  .cols { display:grid; grid-template-columns: minmax(0,1.2fr) minmax(300px,.8fr); gap:18px; margin-top:18px; }
+  @media (max-width: 900px) { .cols { grid-template-columns:1fr; } .scene { height:260px; } #beagle { left:2%; } #capy { right:2%; } #chest { left:44%; } .actor svg { width:150px; height:auto; } }
+  .card { background:var(--card); border-radius:24px; padding:20px 22px; box-shadow:var(--shadow); }
+  .card + .card { margin-top:18px; }
+  .card h2 { font-family:var(--display); font-weight:600; font-size:21px; margin:0 0 12px; }
+  .card h3 { font-family:var(--display); font-weight:600; font-size:17px; margin:0 0 8px; }
+  .seg { display:inline-flex; background:var(--cardAlt); border-radius:999px; padding:4px; gap:4px; }
+  .seg button { border:0; background:transparent; color:var(--inkSoft); border-radius:999px; padding:8px 14px; font-weight:800; font-size:13.5px; }
+  .seg button.on { background:var(--orange); color:#fff; box-shadow:0 3px 0 var(--orangeDeep); }
+  .seg button:disabled { opacity:.45; cursor:not-allowed; }
+  .who { color:var(--inkSoft); font-size:14px; margin:12px 0 12px; max-width:64ch; }
+  .who b { color:var(--ink); }
+  textarea { width:100%; min-height:78px; font:inherit; font-size:14.5px; padding:12px 14px; border:1.5px solid var(--line); background:#fff; border-radius:16px; resize:vertical; color:var(--ink); }
 
-  /* sequence panel */
-  .steps { background: var(--paper); border: 4px solid var(--paper-2); padding: 18px 20px 20px; }
-  .steps h2 { font-family: var(--display); font-size: 14px; margin: 0 0 12px; }
-  .mode { display: flex; gap: 0; border: 3px solid var(--ink); width: max-content; max-width: 100%; }
-  .mode button { border: 0; background: var(--paper); color: var(--ink); padding: 8px 12px; font-family: var(--display); font-size: 11px; }
-  .mode button.on { background: var(--ink); color: var(--paper); }
-  .mode button:disabled { opacity: .4; cursor: not-allowed; }
-  .who { margin: 10px 0 14px; font-size: 13.5px; color: var(--ink-2); max-width: 62ch; }
-  .who code { font-family: var(--mono); font-size: 12px; background: var(--paper-2); padding: 1px 5px; }
-  textarea { width: 100%; min-height: 76px; font: inherit; font-size: 14px; padding: 10px; border: 3px solid var(--ink); background: #fff; resize: vertical; }
-  .step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 14px 0; border-top: 2px dashed var(--paper-2); align-items: start; }
-  .step:first-of-type { border-top: 0; }
-  .step .n { font-family: var(--display); font-size: 18px; line-height: 1; color: var(--ink); padding-top: 4px; }
-  .step.done .n { color: var(--mint); }
-  .step .t { font-weight: 600; margin-bottom: 4px; }
-  .step .d { color: var(--ink-2); font-size: 13.5px; margin-bottom: 8px; max-width: 60ch; }
-  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .btn { border: 3px solid var(--ink); background: var(--gold); color: var(--ink); padding: 9px 14px; font-family: var(--display); font-size: 11px; box-shadow: 3px 3px 0 var(--ink); transition: transform .06s, box-shadow .06s; }
-  .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
-  .btn.quiet { background: #fff; }
-  .btn.bad { background: #FFD9D2; }
-  .btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; transform: none; }
-  .amt { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; }
-  .amt input { width: 74px; font: inherit; padding: 7px 8px; border: 3px solid var(--ink); background: #fff; }
-  .status { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
-  .status.ok { color: #1C7F5B; } .status.bad { color: var(--wax); }
+  .step { display:grid; grid-template-columns:44px 1fr; gap:12px; padding:14px 0 12px; border-top:1.5px solid var(--line); align-items:start; }
+  .step:first-of-type { border-top:0; }
+  .step .n { width:36px; height:36px; border-radius:12px; background:var(--cardAlt); color:var(--orangeDeep); font-family:var(--display); font-weight:600; font-size:18px; display:grid; place-items:center; }
+  .step.done .n { background:var(--success); color:#fff; }
+  .step .t { font-weight:800; font-size:15.5px; margin-top:6px; }
+  .step .d { color:var(--inkSoft); font-size:13.5px; margin:2px 0 10px; max-width:60ch; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .btn { border:0; border-radius:999px; padding:11px 18px; font-weight:800; font-size:14px; color:#fff; background:var(--orange); box-shadow:0 4px 0 var(--orangeDeep); transition: transform .06s, box-shadow .06s; }
+  .btn:active { transform:translateY(3px); box-shadow:0 1px 0 var(--orangeDeep); }
+  .btn.sand { background:var(--sand); color:var(--ink); box-shadow:0 4px 0 #E2CBA4; }
+  .btn.sand:active { box-shadow:0 1px 0 #E2CBA4; }
+  .btn.green { background:var(--meadow); box-shadow:0 4px 0 var(--meadowDeep); }
+  .btn.green:active { box-shadow:0 1px 0 var(--meadowDeep); }
+  .btn.soft-danger { background:#FBE3DD; color:#B4432F; box-shadow:0 4px 0 #EFC4BA; }
+  .btn.soft-danger:active { box-shadow:0 1px 0 #EFC4BA; }
+  .btn:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; transform:none; }
+  .amt { display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:700; color:var(--inkSoft); }
+  .amt input { width:78px; font:inherit; font-weight:700; padding:9px 10px; border:1.5px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); }
+  .status { font-size:13px; font-weight:700; color:var(--inkSoft); }
+  .status.ok { color:#3B8F4E; } .status.bad { color:#B4432F; }
 
-  /* answer + proof */
-  .answer { margin-top: 16px; border-top: 2px dashed var(--paper-2); padding-top: 14px; }
-  .answer h3, .proof h3 { font-family: var(--display); font-size: 12px; margin: 0 0 8px; }
-  .answer .txt { background: #fff; border: 3px solid var(--ink); padding: 10px 12px; font-size: 14px; white-space: pre-wrap; max-height: 170px; overflow: auto; min-height: 44px; }
-  .trace { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; font-family: var(--mono); font-size: 12px; margin-top: 8px; }
-  .trace .k { color: var(--ink-2); } .trace .v { word-break: break-all; }
-  .proof { position: relative; margin-top: 16px; border: 3px solid var(--ink); background: #fff; padding: 14px 14px 12px; }
-  .proof .empty { color: var(--ink-2); font-size: 13.5px; }
-  .proof .fields { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; font-family: var(--mono); font-size: 12px; }
-  #sealMark { position: absolute; right: 12px; top: -10px; opacity: 0; transform: scale(3) rotate(-25deg); }
-  #sealMark.slam { animation: slam .35s cubic-bezier(.2,1.6,.4,1) forwards; }
-  @keyframes slam { 0% { opacity: 0; transform: scale(3) rotate(-25deg) } 60% { opacity: 1; transform: scale(.9) rotate(-12deg) } 100% { opacity: 1; transform: scale(1) rotate(-12deg) } }
-  .checks { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 4px 8px; border: 2px solid var(--ink); background: #fff; }
-  .chk.ok { background: #DDF6EA; } .chk.bad { background: #FFD9D2; }
+  .txt { background:var(--cardAlt); border-radius:16px; padding:12px 14px; font-size:14.5px; white-space:pre-wrap; max-height:180px; overflow:auto; min-height:46px; }
+  .kv { display:grid; grid-template-columns:max-content 1fr; gap:4px 12px; font-size:13px; margin-top:10px; }
+  .kv .k { color:var(--inkSoft); font-weight:700; } .kv .v { word-break:break-all; font-weight:600; }
+  .proof { position:relative; }
+  #seal { position:absolute; right:14px; top:-14px; opacity:0; transform:scale(3) rotate(-25deg); }
+  #seal.slam { animation: slam .4s cubic-bezier(.2,1.5,.4,1) forwards; }
+  @keyframes slam { 0% { opacity:0; transform:scale(3) rotate(-25deg) } 60% { opacity:1; transform:scale(.9) rotate(-12deg) } 100% { opacity:1; transform:scale(1) rotate(-12deg) } }
+  .empty { color:var(--inkSoft); font-size:14px; }
+  .checks { display:grid; gap:6px; margin-top:12px; }
+  .chk { display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; background:var(--cardAlt); border-radius:12px; padding:8px 12px; }
+  .chk svg { flex:none; }
 
-  /* receipt tape */
-  .tape { background: var(--paper); color: var(--ink); font-family: var(--mono); font-size: 12.5px; line-height: 1.55; padding: 18px 18px 26px; align-self: start; position: relative;
-    -webkit-mask: linear-gradient(#000 0 0) top/100% calc(100% - 12px) no-repeat, radial-gradient(circle at 7px 100%, transparent 6px, #000 6.5px) bottom/14px 12px repeat-x; mask: linear-gradient(#000 0 0) top/100% calc(100% - 12px) no-repeat, radial-gradient(circle at 7px 100%, transparent 6px, #000 6.5px) bottom/14px 12px repeat-x; }
-  .tape h2 { font-family: var(--display); font-size: 13px; margin: 0 0 4px; }
-  .tape .sub { color: var(--ink-2); margin-bottom: 12px; font-family: var(--sans); font-size: 13px; }
-  .tape .line { border-top: 2px dashed var(--paper-2); padding: 7px 0; word-break: break-word; }
-  .tape .line.ok { color: #1C7F5B; } .tape .line.bad { color: var(--wax); } .tape .line.dim { color: var(--ink-2); }
-  .tape .line a { color: #0E5A8A; }
+  .feed { display:grid; gap:8px; }
+  .item { display:grid; grid-template-columns:26px 1fr; gap:10px; align-items:start; padding:10px 12px; border-radius:14px; background:var(--cardAlt); font-size:13.5px; font-weight:600; }
+  .item.ok { background:#E7F4E8; } .item.bad { background:#FBE3DD; } .item.dim { background:transparent; color:var(--inkSoft); padding:6px 12px; }
+  .item .ic { width:22px; height:22px; border-radius:50%; background:var(--sand); display:grid; place-items:center; margin-top:1px; }
+  .item.ok .ic { background:var(--success); } .item.bad .ic { background:var(--danger); } .item.dim .ic { background:var(--line); }
+  .item a { font-weight:800; }
 </style>
 </head>
 <body>
-<header class="top">
-  <h1>Pinky Promise</h1>
-  <span class="tag">Escrow that pays AI agents only on proof. Built on 0G.</span>
-  <div class="net" id="net"></div>
+<div class="wrap">
+<header>
+  <div><h1>Pinky Promise</h1><div class="sub">Escrow that pays AI agents only on proof. Built on 0G.</div></div>
+  <div class="pills" id="pills"></div>
 </header>
 
-<section class="stage" aria-label="Scene: Beagle the worker and Capybara the escrow">
-  <div class="caption" id="caption">Beagle is waiting for a job.</div>
-  <div class="actor" id="beagleActor"><div id="beagleSprite"></div><div class="name" id="beagleName">Beagle<small id="beagleSub">worker agent</small></div></div>
+<section class="scene" aria-label="Beagle the worker, the escrow chest, and Capybara the escrow keeper">
+  <div class="bg" id="bg"></div>
+  <div class="bubble" id="bubble">Beagle is waiting for a job.</div>
+  <div class="actor" id="beagle"></div>
+  <div class="nameplate" style="left:calc(9% + 60px)" id="beagleName">Beagle<small>worker agent</small></div>
   <div id="bag" class="hidden"></div>
-  <div class="actor" id="vaultActor"><div id="vaultSprite"></div></div>
-  <div class="actor" id="capyActor"><div id="capySprite"></div><div class="name">Capybara<small>escrow contract</small></div></div>
-  <div class="coin-burst" id="burst"></div>
-  <div class="ground"></div>
+  <div class="actor" id="chest"></div>
+  <div class="actor" id="capy"></div>
+  <div class="nameplate" style="right:calc(7% + 52px)">Capybara<small>escrow keeper</small></div>
+  <div class="burst" id="burst"></div>
 </section>
 
-<main class="body">
-  <section class="steps">
-    <h2>Hire Beagle</h2>
-    <div class="mode" role="group" aria-label="Which Beagle">
-      <button id="modeKey" class="on">Beagle with a key</button>
-      <button id="modeSealed">Sealed Beagle, Agentic ID</button>
-    </div>
-    <p class="who" id="who"></p>
-    <textarea id="task">Summarize the three biggest smart-contract risks when accepting an ERC-20 as escrow collateral, in plain language.</textarea>
+<div class="cols">
+  <div>
+    <section class="card">
+      <h2>Hire Beagle</h2>
+      <div class="seg" role="group" aria-label="Which Beagle">
+        <button id="modeKey" class="on">Beagle with a key</button>
+        <button id="modeSealed">Sealed Beagle</button>
+      </div>
+      <p class="who" id="who"></p>
+      <textarea id="task">Summarize the three biggest smart-contract risks when accepting an ERC-20 as escrow collateral, in plain language.</textarea>
 
-    <div class="step" id="s1"><div class="n">1</div><div>
-      <div class="t">Lock the bounty with Capybara</div>
-      <div class="d">The job's task hash, the agent, and the money go into the escrow contract on 0G Galileo.</div>
-      <div class="row"><span class="amt">Bounty <input id="amount" value="0.01" /> 0G</span><button class="btn" id="btnJob">Lock funds</button><span class="status" id="st1"></span></div>
-    </div></div>
+      <div class="step" id="s1"><div class="n">1</div><div>
+        <div class="t">Lock the bounty in the chest</div>
+        <div class="d">The task hash, the agent, and the money go into the escrow contract on 0G Galileo. Capybara keeps the key.</div>
+        <div class="row"><span class="amt"><input id="amount" value="0.01" /> 0G</span><button class="btn" id="btnJob">Lock funds</button><span class="status" id="st1"></span></div>
+      </div></div>
 
-    <div class="step" id="s2"><div class="n">2</div><div>
-      <div class="t">Beagle does the work</div>
-      <div class="d" id="d2"></div>
-      <div class="row"><button class="btn quiet" id="btnWork" disabled>Send Beagle to work</button><span class="status" id="st2"></span></div>
-    </div></div>
+      <div class="step" id="s2"><div class="n">2</div><div>
+        <div class="t">Beagle does the work</div>
+        <div class="d" id="d2"></div>
+        <div class="row"><button class="btn sand" id="btnWork" disabled>Send Beagle to work</button><span class="status" id="st2"></span></div>
+      </div></div>
 
-    <div class="step" id="s3"><div class="n">3</div><div>
-      <div class="t">Hand the proof to Capybara</div>
-      <div class="d" id="d3"></div>
-      <div class="row"><button class="btn" id="btnSettle" disabled>Submit proof</button><button class="btn bad" id="btnFake" disabled>Try a forged proof</button><button class="btn bad" id="btnReplay" disabled>Replay the seal</button><span class="status" id="st3"></span></div>
-    </div></div>
+      <div class="step" id="s3"><div class="n">3</div><div>
+        <div class="t">Show Capybara the proof</div>
+        <div class="d" id="d3"></div>
+        <div class="row"><button class="btn green" id="btnSettle" disabled>Submit proof</button><button class="btn soft-danger" id="btnFake" disabled>Try a forged proof</button><button class="btn soft-danger" id="btnReplay" disabled>Replay the seal</button><span class="status" id="st3"></span></div>
+      </div></div>
+    </section>
 
-    <div class="answer">
+    <section class="card">
       <h3>What Beagle delivered</h3>
-      <div class="txt" id="output">Nothing yet.</div>
-      <div class="trace" id="trace"></div>
-    </div>
+      <div class="txt" id="output">Nothing yet. Beagle is napping.</div>
+      <div class="kv" id="trace"></div>
+    </section>
 
-    <div class="proof">
-      <div id="sealMark"></div>
+    <section class="card proof">
+      <div id="seal"></div>
       <h3>The proof</h3>
-      <div id="proofBody"><p class="empty">Appears after Beagle works. Anyone can check it without gas.</p></div>
-      <div class="row" style="margin-top:10px"><button class="btn quiet" id="btnVerify" disabled>Check it yourself</button><button class="btn quiet" id="btnVerifyTampered" disabled>Check with one word changed</button></div>
+      <div id="proofBody"><p class="empty">Appears after Beagle works. Anyone can check it, no gas needed.</p></div>
+      <div class="row" style="margin-top:12px"><button class="btn sand" id="btnVerify" disabled>Check it yourself</button><button class="btn sand" id="btnVerifyTampered" disabled>Check with one word changed</button></div>
       <div class="checks" id="checks"></div>
-    </div>
-  </section>
+    </section>
+  </div>
 
-  <aside class="tape" aria-live="polite">
-    <h2>Receipt tape</h2>
-    <div class="sub">Every call, every transaction, as it happens.</div>
-    <div id="log"></div>
+  <aside class="card" aria-live="polite">
+    <h3>What just happened</h3>
+    <div class="feed" id="feed"></div>
   </aside>
-</main>
+</div>
+</div>
 
-<script src="/sprites.js"></script>
-<script>
+<script type="module">
+import { beagleSVG, capySVG, coinSVG, bagSVG, chestSVG, sealSVG, pawSVG, checkSVG, sceneSVG } from "/art.js";
 const $ = (id) => document.getElementById(id);
-const state = { mode: "key", task: null, jobId: null, receipt: null, output: null, sealed: null, info: null };
-const post = async (p, body) => (await fetch(p, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })).json();
-const short = (s) => s ? String(s).slice(0, 8) + "…" + String(s).slice(-5) : "";
+const state = { mode:"key", task:null, jobId:null, receipt:null, output:null, sealed:null, info:null };
+const post = async (p, body) => (await fetch(p, { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify(body) })).json();
+const short = (s) => s ? String(s).slice(0,8) + "…" + String(s).slice(-5) : "";
 const link = (url, text) => `<a href="${url}" target="_blank" rel="noopener">${text}</a>`;
 const enable = (ids, on) => ids.forEach((i) => ($(i).disabled = !on));
-const grid = (el, obj) => { el.innerHTML = Object.entries(obj).map(([k, v]) => `<div class="k">${k}</div><div class="v">${v}</div>`).join(""); };
-const log = (msg, cls = "") => { $("log").insertAdjacentHTML("beforeend", `<div class="line ${cls}">${msg}</div>`); };
-const caption = (html) => ($("caption").innerHTML = html);
+const kv = (el, obj) => { el.innerHTML = Object.entries(obj).map(([k,v]) => `<div class="k">${k}</div><div class="v">${v}</div>`).join(""); };
+const feed = (msg, cls = "") => { const ic = cls === "ok" ? checkSVG(14) : cls === "bad" ? checkSVG(14,false) : pawSVG(13, cls === "dim" ? "#C9B491" : "#E8813A"); $("feed").insertAdjacentHTML("afterbegin", `<div class="item ${cls}"><div class="ic">${ic}</div><div>${msg}</div></div>`); };
+const say = (html) => ($("bubble").innerHTML = html);
 const status = (id, txt, cls = "") => { const e = $(id); e.textContent = txt; e.className = "status " + cls; };
-
-const draw = (id, map, scale) => ($(id).innerHTML = spriteSVG(map, scale));
-const beagle = (mood) => { draw("beagleSprite", SPRITES.beagle[mood], 7); $("beagleActor").className = "actor " + mood; };
-const capy = (mood) => { draw("capySprite", SPRITES.capy[mood], 7); $("capyActor").className = "actor " + mood; };
-draw("vaultSprite", SPRITES.vault, 5); draw("bag", SPRITES.bag, 5); beagle("idle"); capy("idle");
+const beagle = (mood) => { $("beagle").innerHTML = beagleSVG(mood, 190); $("beagle").className = "actor " + mood; };
+const capy = (mood) => { $("capy").innerHTML = capySVG(mood, 190); $("capy").className = "actor " + mood; };
+const chest = (open) => ($("chest").innerHTML = chestSVG(open, 130));
 const bag = (cls) => ($("bag").className = cls);
-const burst = () => { const b = $("burst"); b.innerHTML = ""; for (let i = 0; i < 7; i++) b.insertAdjacentHTML("beforeend", `<span style="--dx:${(i - 3) * 22}px;left:${i * 6}px;animation-delay:${i * 40}ms">${spriteSVG(SPRITES.coin, 3)}</span>`); };
-const slam = () => { const s = $("sealMark"); s.innerHTML = spriteSVG(SPRITES.seal, 6); s.className = ""; void s.offsetWidth; s.className = "slam"; };
-const chk = (label, ok) => `<span class="chk ${ok ? "ok" : "bad"}">${spriteSVG(ok ? SPRITES.check : SPRITES.cross, 2)} ${label}</span>`;
+const burst = () => { const b = $("burst"); b.innerHTML = ""; for (let i = 0; i < 8; i++) b.insertAdjacentHTML("beforeend", `<span style="--dx:${(i-4)*26}px;left:${i*8}px;animation-delay:${i*45}ms">${coinSVG(22)}</span>`); };
+const slam = (ok = true) => { const s = $("seal"); s.innerHTML = sealSVG(84, ok); s.className = ""; void s.offsetWidth; s.className = "slam"; };
+const chk = (label, ok) => `<div class="chk">${checkSVG(20, ok)} ${label}</div>`;
+
+$("bg").innerHTML = sceneSVG(1200, 330); $("bag").innerHTML = bagSVG(64); beagle("idle"); capy("idle"); chest(false);
 
 function setMode(m) {
   state.mode = m; $("modeKey").classList.toggle("on", m === "key"); $("modeSealed").classList.toggle("on", m === "sealed");
   const s = state.info?.sealed, r = state.info?.router;
   if (m === "key") {
-    $("who").innerHTML = `This Beagle keeps its own signing key. It answers through 0G Compute with <code>verify_tee</code>, then signs a receipt that ties the job, the task, the answer, and the TEE proof together.`;
-    $("beagleName").innerHTML = `Beagle<small id="beagleSub">worker agent with a key</small>`;
+    $("who").innerHTML = `This Beagle keeps its own signing key. It answers through 0G Compute with <b>verify_tee</b> on, then signs a receipt that ties the job, the task, the answer, and the TEE proof together.`;
+    $("beagleName").innerHTML = `Beagle<small>worker agent with a key</small>`;
     $("d2").textContent = `Beagle asks ${r?.model ?? "the model"} on the 0G Compute Router (${r?.net ?? ""}) and gets a hardware-signed proof of the answer.`;
-    $("d3").textContent = `Capybara recovers the signer from the receipt. If it is Beagle's key, the bounty moves. If not, nothing moves.`;
+    $("d3").textContent = `Capybara recovers the signer from the receipt. If it is Beagle's key, the chest opens. If not, nothing moves.`;
   } else {
-    $("who").innerHTML = `This Beagle is Agentic ID <code>#${s?.agentId}</code>, an ERC-7857 agent running inside a TEE. Its seal key was born in there and never leaves, so not even its owner can forge a reply. Every response carries an <code>X-Agent-Proof</code>.`;
-    $("beagleName").innerHTML = `Beagle #${s?.agentId}<small id="beagleSub">sealed Agentic ID</small>`;
+    $("who").innerHTML = `This Beagle is Agentic ID <b>#${s?.agentId}</b>, an ERC-7857 agent living inside a TEE. Its seal key was born in there and never leaves, so not even its owner can forge a reply. Every response carries an <b>X-Agent-Proof</b>.`;
+    $("beagleName").innerHTML = `Beagle #${s?.agentId}<small>sealed Agentic ID</small>`;
     $("d2").textContent = `The client calls Beagle's sealed service. The reply comes back stamped with a seal that names this client as the only one who can redeem it.`;
     $("d3").textContent = `Capybara rebuilds the seal digest, recovers the signer, and checks it against getAgentSeal on the AgenticID contract. One seal pays once.`;
   }
   reset();
 }
 function reset() {
-  Object.assign(state, { jobId: null, receipt: null, sealed: null, output: null });
-  ["st1", "st2", "st3"].forEach((i) => status(i, "")); ["s1", "s2", "s3"].forEach((i) => $(i).classList.remove("done"));
-  $("output").textContent = "Nothing yet."; $("trace").innerHTML = ""; $("checks").innerHTML = ""; $("sealMark").className = ""; $("sealMark").innerHTML = "";
-  $("proofBody").innerHTML = `<p class="empty">Appears after Beagle works. Anyone can check it without gas.</p>`;
-  bag("hidden"); beagle("idle"); capy("idle"); caption("Beagle is waiting for a job.");
-  enable(["btnJob"], true); enable(["btnWork", "btnSettle", "btnFake", "btnReplay", "btnVerify", "btnVerifyTampered"], false);
+  Object.assign(state, { jobId:null, receipt:null, sealed:null, output:null });
+  ["st1","st2","st3"].forEach((i) => status(i, "")); ["s1","s2","s3"].forEach((i) => $(i).classList.remove("done"));
+  $("output").textContent = "Nothing yet. Beagle is napping."; $("trace").innerHTML = ""; $("checks").innerHTML = ""; $("seal").className = ""; $("seal").innerHTML = "";
+  $("proofBody").innerHTML = `<p class="empty">Appears after Beagle works. Anyone can check it, no gas needed.</p>`;
+  bag("hidden"); beagle("idle"); capy("idle"); chest(false); say("Beagle is waiting for a job.");
+  enable(["btnJob"], true); enable(["btnWork","btnSettle","btnFake","btnReplay","btnVerify","btnVerifyTampered"], false);
 }
 
 (async () => {
   const i = await (await fetch("/api/info")).json(); state.info = i;
-  $("net").innerHTML = `<span>chain <b>0G Galileo</b></span><span>router <b>${i.router.net} / ${i.router.model}</b></span><span>escrow <b>${link(i.escrowUrl, short(i.escrow))}</b></span>`;
-  log(`Escrow ${i.escrow} on 0G Galileo. Router ${i.router.net}, model ${i.router.model}.`, "dim");
-  if (i.sealed) log(`Sealed Beagle is Agentic ID #${i.sealed.agentId}. Seal ${short(i.sealed.agentSeal)}. ${link(i.sealed.url + "/hello", "Its signed card")}.`, "dim");
+  $("pills").innerHTML = `<div class="pill"><span>chain</span> 0G Galileo</div><div class="pill"><span>model</span> ${i.router.model}</div><div class="pill"><span>escrow</span> ${link(i.escrowUrl, short(i.escrow))}</div>` + (i.sealed ? `<div class="pill"><span>agent</span> #${i.sealed.agentId}</div>` : "");
+  feed(`Escrow ${short(i.escrow)} on 0G Galileo. Router ${i.router.net}, model ${i.router.model}.`, "dim");
+  if (i.sealed) feed(`Sealed Beagle is Agentic ID #${i.sealed.agentId}. ${link(i.sealed.url + "/hello", "See its signed card")}.`, "dim");
   else $("modeSealed").disabled = true;
   setMode("key");
 })();
 $("modeKey").onclick = () => setMode("key"); $("modeSealed").onclick = () => setMode("sealed");
 
 $("btnJob").onclick = async () => {
-  enable(["btnJob"], false); state.task = $("task").value.trim(); status("st1", "sending transaction…");
-  caption(`Locking <em>${$("amount").value} 0G</em> with Capybara…`);
-  log(`createJob: task hash, agent, ${$("amount").value} 0G bounty`);
+  enable(["btnJob"], false); state.task = $("task").value.trim(); status("st1", "sending…");
+  say(`Locking <em>${$("amount").value} 0G</em> in the chest…`); feed(`Locking ${$("amount").value} 0G with the task hash and Beagle's identity.`);
   const r = await post("/api/job", { task: state.task, amount: $("amount").value, mode: state.mode });
-  if (r.error) { status("st1", r.error, "bad"); log(r.error, "bad"); enable(["btnJob"], true); return; }
-  state.jobId = r.jobId; $("s1").classList.add("done"); status("st1", `job #${r.jobId} in block ${r.block}`, "ok");
-  log(`Job #${r.jobId} funded. ${link(r.txUrl, "See the transaction")}.`, "ok");
-  bag(""); setTimeout(() => bag("in-vault"), 50); capy("happy"); setTimeout(() => capy("idle"), 900);
-  caption(`Job <em>#${r.jobId}</em> is funded. Capybara holds the bounty.`);
+  if (r.error) { status("st1", r.error, "bad"); feed(r.error, "bad"); enable(["btnJob"], true); return; }
+  state.jobId = r.jobId; $("s1").classList.add("done"); status("st1", `job #${r.jobId}, block ${r.block}`, "ok");
+  feed(`Job #${r.jobId} is funded. ${link(r.txUrl, "See the transaction")}.`, "ok");
+  bag(""); setTimeout(() => bag("in-chest"), 60); setTimeout(() => chest(true), 700); capy("happy"); setTimeout(() => capy("idle"), 1100);
+  say(`Job <em>#${r.jobId}</em> is funded. Capybara is sitting on the chest.`);
   enable(["btnWork"], true);
 };
 
 $("btnWork").onclick = async () => {
   enable(["btnWork"], false); beagle("working"); status("st2", "working…");
   if (state.mode === "key") {
-    caption(`Beagle is asking <em>${state.info.router.model}</em> on 0G Compute…`);
-    log(`Beagle calls the 0G Compute Router with verify_tee on, trust mode verified.`);
+    say(`Beagle is asking <em>${state.info.router.model}</em> on 0G Compute…`); feed(`Beagle calls the 0G Compute Router with verify_tee on.`);
     const r = await post("/api/work", { jobId: state.jobId, task: state.task, mode: "key" });
-    if (r.error) { status("st2", r.error, "bad"); log(r.error, "bad"); beagle("sad"); enable(["btnWork"], true); return; }
-    state.receipt = r.receipt; state.output = r.output;
-    $("output").textContent = r.output;
-    grid($("trace"), { model: r.trace.model, provider: short(r.trace.provider), "chat id": r.trace.chatId, "TEE verified": r.trace.teeVerified, latency: r.trace.latencyMs + " ms" });
-    $("proofBody").innerHTML = `<div class="fields"><div class="k">type</div><div class="v">receipt signed by Beagle's key</div><div class="k">job</div><div class="v">#${r.receipt.jobId}</div><div class="k">task hash</div><div class="v">${short(r.receipt.taskHash)}</div><div class="k">answer hash</div><div class="v">${short(r.receipt.outputHash)}</div><div class="k">TEE proof hash</div><div class="v">${short(r.receipt.proofHash)}</div><div class="k">signer</div><div class="v">${short(r.receipt.agent)}</div><div class="k">signature</div><div class="v">${short(r.receipt.signature)}</div></div>`;
-    log(`TEE provider ${short(r.trace.provider)} signed the inference. tee_verified = ${r.trace.teeVerified}.`, r.trace.teeVerified ? "ok" : "bad");
-    log(`Beagle signed a receipt for job #${r.receipt.jobId}.`, "ok");
-    enable(["btnSettle", "btnFake", "btnVerify", "btnVerifyTampered"], true);
+    if (r.error) { status("st2", r.error, "bad"); feed(r.error, "bad"); beagle("sad"); enable(["btnWork"], true); return; }
+    state.receipt = r.receipt; state.output = r.output; $("output").textContent = r.output;
+    kv($("trace"), { model: r.trace.model, provider: short(r.trace.provider), "chat id": r.trace.chatId, "TEE verified": r.trace.teeVerified, latency: r.trace.latencyMs + " ms" });
+    $("proofBody").innerHTML = `<div class="kv" style="margin-top:0"><div class="k">type</div><div class="v">receipt signed by Beagle's key</div><div class="k">job</div><div class="v">#${r.receipt.jobId}</div><div class="k">task hash</div><div class="v">${short(r.receipt.taskHash)}</div><div class="k">answer hash</div><div class="v">${short(r.receipt.outputHash)}</div><div class="k">TEE proof hash</div><div class="v">${short(r.receipt.proofHash)}</div><div class="k">signer</div><div class="v">${short(r.receipt.agent)}</div><div class="k">signature</div><div class="v">${short(r.receipt.signature)}</div></div>`;
+    feed(`TEE provider ${short(r.trace.provider)} signed the inference. tee_verified = ${r.trace.teeVerified}.`, r.trace.teeVerified ? "ok" : "bad");
+    feed(`Beagle signed a receipt for job #${r.receipt.jobId}.`, "ok");
+    enable(["btnSettle","btnFake","btnVerify","btnVerifyTampered"], true);
   } else {
-    caption(`The client is calling <em>sealed Beagle</em> inside its TEE…`);
-    log(`Client calls Beagle's sealed service with its own address in X-Client-Address.`);
+    say(`The client is calling <em>sealed Beagle</em> inside its TEE…`); feed(`Client calls Beagle's sealed service with its own address in X-Client-Address.`);
     const r = await post("/api/work", { jobId: state.jobId, task: state.task, mode: "sealed" });
-    if (r.error || !r.proof) { status("st2", r.error || "no seal on the reply", "bad"); log(r.error || "The reply carried no X-Agent-Proof.", "bad"); beagle("sad"); enable(["btnWork"], true); return; }
-    state.sealed = r; state.output = r.output;
-    $("output").textContent = r.answer || r.output;
-    grid($("trace"), { service: r.service, ...(r.modelTrace ? { model: r.modelTrace.model, "TEE verified": r.modelTrace.teeVerified } : {}), "seal signer": short(r.signer), "on-chain seal": short(r.expectedSeal), "seal matches": r.sealMatches });
-    $("proofBody").innerHTML = `<div class="fields"><div class="k">type</div><div class="v">X-Agent-Proof from the TEE</div><div class="k">agent</div><div class="v">#${r.proof.agentId}</div><div class="k">who may redeem</div><div class="v">${short(r.proof.submitter)}</div><div class="k">exchange hash</div><div class="v">${short(r.proof.taskHash)}</div><div class="k">framework</div><div class="v">${short(r.proof.frameworkHash)}</div><div class="k">valid until</div><div class="v">${new Date(r.proof.deadline * 1000).toLocaleTimeString()}</div><div class="k">signature</div><div class="v">${short(r.proof.signature)}</div></div>`;
-    log(`Reply carried X-Agent-Proof. Signer ${short(r.signer)} ${r.sealMatches ? "matches" : "does not match"} getAgentSeal(${r.proof.agentId}).`, r.sealMatches ? "ok" : "bad");
-    if (r.answerError) log(`Beagle's model call failed inside the TEE: ${r.answerError}. The seal is still valid.`, "dim");
-    enable(["btnSettle", "btnFake", "btnReplay"], true);
+    if (r.error || !r.proof) { status("st2", r.error || "no seal on the reply", "bad"); feed(r.error || "The reply carried no X-Agent-Proof.", "bad"); beagle("sad"); enable(["btnWork"], true); return; }
+    state.sealed = r; state.output = r.output; $("output").textContent = r.answer || r.output;
+    kv($("trace"), { service: r.service, ...(r.modelTrace ? { model: r.modelTrace.model, "TEE verified": r.modelTrace.teeVerified } : {}), "seal signer": short(r.signer), "on-chain seal": short(r.expectedSeal), "seal matches": r.sealMatches });
+    $("proofBody").innerHTML = `<div class="kv" style="margin-top:0"><div class="k">type</div><div class="v">X-Agent-Proof from the TEE</div><div class="k">agent</div><div class="v">#${r.proof.agentId}</div><div class="k">who may redeem</div><div class="v">${short(r.proof.submitter)}</div><div class="k">exchange hash</div><div class="v">${short(r.proof.taskHash)}</div><div class="k">framework</div><div class="v">${short(r.proof.frameworkHash)}</div><div class="k">valid until</div><div class="v">${new Date(r.proof.deadline*1000).toLocaleTimeString()}</div><div class="k">signature</div><div class="v">${short(r.proof.signature)}</div></div>`;
+    feed(`Reply carried X-Agent-Proof. Signer ${short(r.signer)} ${r.sealMatches ? "matches" : "does not match"} getAgentSeal(${r.proof.agentId}).`, r.sealMatches ? "ok" : "bad");
+    if (r.answerError) feed(`Beagle's model call failed inside the TEE: ${r.answerError}. The seal is still valid.`, "dim");
+    enable(["btnSettle","btnFake","btnReplay"], true);
   }
-  slam(); $("s2").classList.add("done"); status("st2", "delivered with proof", "ok"); beagle("happy"); setTimeout(() => beagle("idle"), 1000);
-  caption(`Beagle delivered. The proof is <em>stamped</em>.`);
+  slam(); $("s2").classList.add("done"); status("st2", "delivered with proof", "ok"); beagle("happy"); setTimeout(() => beagle("idle"), 1100);
+  say(`Beagle delivered. The proof is <em>stamped</em>.`);
 };
 
 $("btnSettle").onclick = async () => {
-  enable(["btnSettle"], false); status("st3", "submitting…"); caption(`Capybara is checking the proof on chain…`);
+  enable(["btnSettle"], false); status("st3", "submitting…"); say(`Capybara is checking the proof on chain…`);
   let r;
-  if (state.mode === "key") { log(`settle: contract recovers the signer and compares it with the job's agent.`); r = await post("/api/settle", { mode: "key", receipt: state.receipt }); }
-  else { log(`settleWithSeal: contract rebuilds the seal digest and checks getAgentSeal(${state.sealed.proof.agentId}).`); r = await post("/api/settle", { mode: "sealed", jobId: state.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof }); }
+  if (state.mode === "key") { feed(`settle: the contract recovers the signer and compares it with the job's agent.`); r = await post("/api/settle", { mode:"key", receipt: state.receipt }); }
+  else { feed(`settleWithSeal: the contract rebuilds the seal digest and checks getAgentSeal(${state.sealed.proof.agentId}).`); r = await post("/api/settle", { mode:"sealed", jobId: state.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof }); }
   if (r.status === "success") {
-    log(`Paid. Capybara released the bounty to Beagle. ${link(r.txUrl, "See the transaction")}.`, "ok");
-    $("s3").classList.add("done"); status("st3", "paid", "ok"); capy("happy"); bag("to-beagle"); burst(); setTimeout(() => beagle("happy"), 700);
-    caption(`Proof accepted. <em>Beagle got paid.</em>`); enable(["btnFake"], false);
-  } else { log(`Rejected: ${r.error}.`, "bad"); status("st3", r.error, "bad"); capy("sad"); caption(`Capybara says no: <em>${r.error}</em>.`); enable(["btnSettle"], true); }
+    feed(`Paid. Capybara opened the chest and Beagle got the bounty. ${link(r.txUrl, "See the transaction")}.`, "ok");
+    $("s3").classList.add("done"); status("st3", "paid", "ok"); capy("happy"); chest(false); bag("to-beagle"); burst(); setTimeout(() => beagle("happy"), 800);
+    say(`Proof accepted. <em>Beagle got paid.</em>`); enable(["btnFake"], false);
+  } else { feed(`Rejected: ${r.error}.`, "bad"); status("st3", r.error, "bad"); capy("sad"); say(`Capybara says no: <em>${r.error}</em>.`); enable(["btnSettle"], true); }
 };
 
 $("btnFake").onclick = async () => {
-  caption(`An impostor hands Capybara a <em>forged</em> proof…`); log(`Impostor submits the same proof with a tampered hash.`);
+  say(`An impostor hands Capybara a <em>forged</em> proof…`); feed(`Impostor submits the same proof with a tampered hash.`);
   const r = state.mode === "key"
-    ? await post("/api/settle", { mode: "key", receipt: { ...state.receipt, outputHash: "0x" + "ab".repeat(32) } })
-    : await post("/api/settle", { mode: "sealed", jobId: state.jobId, outputHash: state.sealed.outputHash, proof: { ...state.sealed.proof, taskHash: "0x" + "ab".repeat(32) } });
-  if (r.status === "success") log("A forged proof was accepted. That must never happen.", "bad");
-  else { log(`Rejected on chain: ${r.error}. No proof, no pay.`, "ok"); capy("sad"); caption(`Capybara refuses: <em>${r.error}</em>. Nothing moved.`); setTimeout(() => capy("idle"), 1200); }
+    ? await post("/api/settle", { mode:"key", receipt: { ...state.receipt, outputHash: "0x" + "ab".repeat(32) } })
+    : await post("/api/settle", { mode:"sealed", jobId: state.jobId, outputHash: state.sealed.outputHash, proof: { ...state.sealed.proof, taskHash: "0x" + "ab".repeat(32) } });
+  if (r.status === "success") feed("A forged proof was accepted. That must never happen.", "bad");
+  else { feed(`Rejected on chain: ${r.error}. No proof, no pay.`, "ok"); capy("sad"); say(`Capybara refuses: <em>${r.error}</em>. Nothing moved.`); setTimeout(() => capy("idle"), 1300); }
 };
 
 $("btnReplay").onclick = async () => {
-  enable(["btnReplay"], false); caption(`Someone tries to spend the <em>same seal twice</em>…`); log(`Opening a second job, then replaying the same seal against it.`);
+  enable(["btnReplay"], false); say(`Someone tries to spend the <em>same seal twice</em>…`); feed(`Opening a second job, then replaying the same seal against it.`);
   const j = await post("/api/job", { task: state.task + " (again)", amount: "0.001", mode: "sealed" });
-  if (j.error) { log(j.error, "bad"); return; }
-  const r = await post("/api/settle", { mode: "sealed", jobId: j.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof });
-  if (r.status === "success") log("A replayed seal was accepted. That must never happen.", "bad");
-  else { log(`Job #${j.jobId} rejected the replay: ${r.error}. One serve, one seal, one payout.`, "ok"); capy("sad"); caption(`Capybara refuses: <em>${r.error}</em>.`); setTimeout(() => capy("idle"), 1200); }
+  if (j.error) { feed(j.error, "bad"); return; }
+  const r = await post("/api/settle", { mode:"sealed", jobId: j.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof });
+  if (r.status === "success") feed("A replayed seal was accepted. That must never happen.", "bad");
+  else { feed(`Job #${j.jobId} rejected the replay: ${r.error}. One serve, one seal, one payout.`, "ok"); capy("sad"); say(`Capybara refuses: <em>${r.error}</em>.`); setTimeout(() => capy("idle"), 1300); }
 };
 
 const verify = async (output) => {
   const r = await post("/api/verify", { receipt: state.receipt, output });
-  $("checks").innerHTML = chk("answer matches", r.outputMatches) + chk("digest reproduces", r.digestMatches) + chk("signer is Beagle", r.signerMatches) + chk("job is on chain", !!r.onChain);
-  log(r.ok ? `Receipt checks out offline. Signer ${short(r.signer)}.` : `Receipt failed: ${r.reasons.join("; ")}.`, r.ok ? "ok" : "bad");
+  $("checks").innerHTML = chk("The answer matches the receipt", r.outputMatches) + chk("The receipt fields rebuild the signed digest", r.digestMatches) + chk("The signature is Beagle's", r.signerMatches) + chk("The job exists on chain", !!r.onChain);
+  feed(r.ok ? `Receipt checks out offline. Signer ${short(r.signer)}.` : `Receipt failed: ${r.reasons.join("; ")}.`, r.ok ? "ok" : "bad");
 };
 $("btnVerify").onclick = () => verify(state.output);
 $("btnVerifyTampered").onclick = () => verify(state.output.replace(/\b(\w+)\b/, "tampered"));

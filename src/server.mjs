@@ -69,7 +69,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/") { res.writeHead(200, { "Content-Type": "text/html" }); return res.end(readFileSync(new URL("../web/index.html", import.meta.url))); }
     if (req.method === "GET" && (url.pathname === "/slides" || url.pathname === "/slides.html")) { res.writeHead(200, { "Content-Type": "text/html" }); return res.end(readFileSync(new URL("../web/slides.html", import.meta.url))); }
     if (req.method === "GET" && (url.pathname === "/slides_cn" || url.pathname === "/slides_cn.html")) { res.writeHead(200, { "Content-Type": "text/html" }); return res.end(readFileSync(new URL("../web/slides_cn.html", import.meta.url))); }
-    if (req.method === "GET" && url.pathname === "/sprites.js") { res.writeHead(200, { "Content-Type": "application/javascript" }); return res.end(readFileSync(new URL("../web/sprites.js", import.meta.url))); }
+    if (req.method === "GET" && /^\/[a-z0-9_-]+\.(js|html|css|png|svg)$/i.test(url.pathname)) { try { const body = readFileSync(new URL("../web" + url.pathname, import.meta.url)); const ct = { js: "application/javascript", html: "text/html", css: "text/css", png: "image/png", svg: "image/svg+xml" }[url.pathname.split(".").pop().toLowerCase()]; res.writeHead(200, { "Content-Type": ct }); return res.end(body); } catch {} }
     if (req.method === "GET" && url.pathname === "/api/info") {
       const s = sealedInfo();
       const [clientBal, agentBal, sealBal] = await Promise.all([

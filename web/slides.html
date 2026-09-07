@@ -5,95 +5,91 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Pinky Promise pitch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --vault:#163A31; --vault-2:#1E4A3E; --vault-3:#2E6B5A; --paper:#F4EAD3; --paper-2:#E9DDC0; --ink:#1E1A17; --ink-2:#5B5248; --gold:#F2B53A; --wax:#D8432F; --mint:#5FD3A6;
-    --display:"Silkscreen", ui-monospace, monospace; --mono:"IBM Plex Mono", ui-monospace, monospace; --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+  :root { --cream:#FFF6EC; --card:#FFFDF9; --cardAlt:#FBEFDE; --sand:#F5E4CA; --line:#EDDFC9; --ink:#33261A; --inkSoft:#8A7660; --orange:#E8813A; --orangeDeep:#C25E1E; --meadow:#6FA86A; --meadowDeep:#4E8A52; --gold:#F5C453; --danger:#E26D5A; --success:#63B975;
+    --display:"Fredoka","Nunito",sans-serif; --body:"Nunito",ui-sans-serif,system-ui,sans-serif; --shadow:0 12px 34px rgba(51,38,26,.10); }
   * { box-sizing:border-box; }
-  html, body { margin:0; height:100%; background:var(--vault); color:var(--paper); font-family:var(--sans); }
-  .deck { height:100%; overflow:hidden; }
-  .slide { height:100vh; width:100vw; display:none; padding:56px 72px; position:relative; }
+  html, body { margin:0; height:100%; background:var(--cream); color:var(--ink); font-family:var(--body); }
+  .slide { height:100vh; width:100vw; display:none; padding:56px 72px; position:relative; overflow:hidden; }
   .slide.on { display:grid; }
-  .slide h1 { font-family:var(--display); font-size:clamp(34px, 5vw, 64px); line-height:1.05; margin:0; }
-  .slide h2 { font-family:var(--display); font-size:clamp(22px, 3vw, 36px); margin:0 0 18px; }
-  .slide p, .slide li { font-size:clamp(17px, 1.6vw, 24px); line-height:1.45; max-width:60ch; }
-  .slide li { margin:8px 0; }
-  .gold { color:var(--gold); }
-  .mint { color:var(--mint); }
-  .wax { color:#FF8A73; }
-  .foot { position:absolute; left:72px; right:72px; bottom:28px; display:flex; justify-content:space-between; font-family:var(--mono); font-size:13px; color:#B7CEC4; }
-  .nav { position:fixed; right:18px; bottom:14px; font-family:var(--mono); font-size:12px; color:#B7CEC4; }
-  /* 1 / title */
-  .s1 { grid-template-columns: 1.1fr .9fr; align-items:center; gap:40px; }
-  .stage { position:relative; height:360px; border:4px solid var(--vault-3); background:var(--vault-2); image-rendering:pixelated; }
-  .ground { position:absolute; left:0; right:0; bottom:0; height:40px; background:var(--vault-3); border-top:4px solid #3E836E; }
-  .actor { position:absolute; bottom:50px; text-align:center; font-family:var(--display); font-size:14px; }
-  .actor small { display:block; font-family:var(--sans); font-size:13px; color:#B7CEC4; }
-  .bag { position:absolute; bottom:70px; left:40%; z-index:2; animation: pass 3.2s steps(12) infinite; }
-  @keyframes pass { 0%,20% { left:40%; } 45%,55% { left:60%; } 80%,100% { left:17%; } }
-  /* 2 / problem */
-  .s2 { grid-template-columns: 1fr 1fr; gap:48px; align-content:center; }
-  .quote { border-left:6px solid var(--gold); padding-left:22px; font-size:clamp(20px, 2.2vw, 30px); line-height:1.35; }
-  /* 3 / how it works */
+  h1 { font-family:var(--display); font-weight:600; font-size:clamp(44px,6.5vw,88px); line-height:1; margin:0; }
+  h2 { font-family:var(--display); font-weight:600; font-size:clamp(30px,4vw,52px); margin:0 0 18px; line-height:1.1; }
+  p, li { font-size:clamp(18px,1.7vw,26px); line-height:1.45; max-width:58ch; }
+  li { margin:10px 0; }
+  .orange { color:var(--orangeDeep); } .green { color:var(--meadowDeep); } .red { color:#B4432F; }
+  .foot { position:absolute; left:72px; right:72px; bottom:26px; display:flex; justify-content:space-between; font-weight:700; font-size:14px; color:var(--inkSoft); }
+  .nav { position:fixed; right:18px; bottom:8px; font-size:12px; color:var(--inkSoft); font-weight:700; }
+  /* 1 */
+  .s1 { padding:0; grid-template-columns:1fr; }
+  .s1 .bg { position:absolute; inset:0; }
+  .s1 .copy { position:absolute; left:72px; top:14%; max-width:46%; }
+  .s1 .copy p { font-weight:700; color:var(--ink); }
+  .s1 .actor { position:absolute; bottom:6%; }
+  .s1 .bag { position:absolute; bottom:12%; left:52%; animation: pass 4s ease-in-out infinite; }
+  @keyframes pass { 0%,15% { left:52%; opacity:1 } 40%,55% { left:66%; opacity:1 } 60% { opacity:0 } 61% { left:46%; opacity:0 } 85%,100% { left:52%; opacity:1 } }
+  .s1 .cta { position:absolute; left:72px; bottom:12%; background:var(--orange); color:#fff; font-weight:800; font-size:22px; padding:16px 26px; border-radius:999px; box-shadow:0 5px 0 var(--orangeDeep); }
+  /* 2 */
+  .s2 { grid-template-columns:1.1fr .9fr; gap:48px; align-content:center; }
+  .quote { background:var(--card); border-radius:28px; padding:34px 36px; box-shadow:var(--shadow); font-family:var(--display); font-weight:500; font-size:clamp(24px,2.6vw,36px); line-height:1.3; align-self:center; }
+  .quote .orange { font-weight:600; }
+  .s2 .beagle { position:absolute; right:60px; bottom:26px; }
+  /* 3 */
   .s3 { align-content:center; }
-  .flow { display:grid; grid-template-columns: repeat(4, 1fr); gap:18px; margin-top:8px; }
-  .box { background:var(--paper); color:var(--ink); padding:18px 18px 16px; border:4px solid var(--paper-2); min-height:210px; }
-  .box .n { font-family:var(--display); font-size:22px; color:var(--vault-3); }
-  .box .t { font-weight:700; font-size:clamp(16px,1.5vw,21px); margin:6px 0 8px; }
-  .box .d { font-size:clamp(14px,1.2vw,17px); color:var(--ink-2); line-height:1.4; }
-  .box .z { margin-top:10px; font-family:var(--mono); font-size:12.5px; color:var(--vault-3); }
-  .rule { margin-top:26px; font-family:var(--mono); font-size:clamp(14px,1.3vw,18px); color:#B7CEC4; }
-  /* 4 / why */
-  .s4 { grid-template-columns: 1.2fr .8fr; gap:48px; align-content:center; }
-  .proof-list li b { color:var(--gold); }
-  .seal { position:absolute; right:90px; top:60px; transform:rotate(-12deg); }
-  .receipt { background:var(--paper); color:var(--ink); font-family:var(--mono); font-size:13.5px; line-height:1.6; padding:20px 22px; }
-  .receipt .ok { color:#1C7F5B; } .receipt .bad { color:var(--wax); }
+  .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .box { background:var(--card); border-radius:24px; padding:22px 22px 18px; box-shadow:var(--shadow); min-height:250px; }
+  .box .n { width:40px; height:40px; border-radius:14px; background:var(--cardAlt); color:var(--orangeDeep); font-family:var(--display); font-weight:600; font-size:22px; display:grid; place-items:center; }
+  .box .t { font-weight:800; font-size:clamp(17px,1.6vw,23px); margin:12px 0 8px; }
+  .box .d { font-size:clamp(14px,1.25vw,18px); color:var(--ink); line-height:1.45; }
+  .box .z { margin-top:12px; font-size:13px; font-weight:800; color:var(--meadowDeep); }
+  .rule { margin-top:24px; font-size:clamp(16px,1.4vw,21px); font-weight:700; color:var(--inkSoft); }
+  /* 4 */
+  .s4 { grid-template-columns:1.15fr .85fr; gap:48px; align-content:center; }
+  .proof-list li b { color:var(--orangeDeep); }
+  .receipt { background:var(--card); border-radius:24px; padding:24px 26px; box-shadow:var(--shadow); font-weight:700; font-size:15.5px; line-height:1.7; position:relative; align-self:center; }
+  .receipt .ok { color:#3B8F4E; } .receipt .bad { color:#B4432F; } .receipt .dim { color:var(--inkSoft); font-weight:600; }
+  .receipt .seal { position:absolute; right:-22px; top:-30px; transform:rotate(-12deg); }
 </style>
 </head>
 <body>
-<div class="deck">
 
 <section class="slide s1 on">
-  <div>
+  <div class="bg" id="bg1"></div>
+  <div class="copy">
     <h1>Pinky Promise</h1>
-    <p style="margin-top:18px">An escrow that pays an AI agent <span class="gold">only when the agent can prove it did the work</span>.</p>
-    <p>Beagle takes jobs. Capybara holds the money. A cryptographic seal moves the coins. Built on 0G Compute and 0G Agentic ID.</p>
+    <p style="margin-top:16px">The escrow that pays an AI agent <span class="orange">only when it can prove it did the work.</span></p>
+    <p style="color:var(--inkSoft)">Beagle takes jobs. Capybara guards the chest. A cryptographic seal opens it. Built on 0G Compute and 0G Agentic ID.</p>
   </div>
-  <div class="stage" aria-hidden="true">
-    <div class="actor" style="left:12%"><div id="b1"></div>Beagle<small>worker agent</small></div>
-    <div class="bag" id="bag1"></div>
-    <div class="actor" style="right:26%; bottom:62px"><div id="v1"></div></div>
-    <div class="actor" style="right:8%"><div id="c1"></div>Capybara<small>escrow contract</small></div>
-    <div class="ground"></div>
-  </div>
-  <div class="foot"><span>0G Taipei hackathon, 2026</span><span>Track C, on-chain agents</span></div>
+  <div class="cta">Live on 0G Galileo</div>
+  <div class="actor" style="left:50%" id="b1"></div>
+  <div class="bag" id="bag1"></div>
+  <div class="actor" style="right:20%; bottom:8%" id="ch1"></div>
+  <div class="actor" style="right:4%" id="c1"></div>
+  <div class="foot" style="color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2)"><span>0G Taipei hackathon, 2026</span><span>Track C, on-chain agents</span></div>
 </section>
 
 <section class="slide s2">
   <div>
     <h2>Agents are becoming economic actors</h2>
-    <p>They take jobs, charge for them, and hire other agents. Between hops nobody is watching.</p>
+    <p>They take jobs, charge for them, and hire other agents. Between hops, nobody is watching.</p>
     <p>Today the payer has two bad options: trust the agent's word, or trust the operator who could swap the model, edit the prompt, or invent the answer.</p>
-    <p class="wax">Fake reviews already dominate: after removing Sybil feedback, 86 percent of rated agents in one ERC-8004 study had no genuine feedback left.</p>
+    <p class="red">Fake reviews already dominate. After removing Sybil feedback, 86 percent of rated agents in one ERC-8004 study had no genuine feedback left.</p>
   </div>
-  <div class="quote">
-    "I trust you" is not a security model.<br><br>
-    <span class="gold">Every hop needs a proof.</span> And someone has to pay on it.
-  </div>
-  <div class="foot"><span>Problem</span><span>2 / 4</span></div>
+  <div class="quote">"I trust you" is not a security model.<br><br><span class="orange">Every hop needs a proof.</span> And someone has to pay on it.</div>
+  <div class="beagle" id="b2"></div>
+  <div class="foot"><span>The problem</span><span>2 / 4</span></div>
 </section>
 
 <section class="slide s3">
   <h2>How Pinky Promise works</h2>
   <div class="flow">
-    <div class="box"><div class="n">1</div><div class="t">Client locks a bounty</div><div class="d">Task hash, agent, and 0G go into the escrow contract.</div><div class="z">0G Galileo / ProofEscrow.sol</div></div>
-    <div class="box"><div class="n">2</div><div class="t">Beagle does the work</div><div class="d">Inference runs on 0G Compute with verify_tee. The provider's TEE signs input, model, and output.</div><div class="z">0G Compute Router / 0GM-1.0-35B</div></div>
-    <div class="box"><div class="n">3</div><div class="t">Beagle stamps a proof</div><div class="d">A sealed Agentic ID replies with X-Agent-Proof, signed by a key that exists only inside its TEE.</div><div class="z">0G Agentic ID / ERC-7857 #383</div></div>
-    <div class="box"><div class="n">4</div><div class="t">Capybara pays on proof</div><div class="d">The contract recovers the signer, matches getAgentSeal, and releases funds. Forged or replayed seals revert.</div><div class="z">settleWithSeal() / same digest as ERC-8004 reputation</div></div>
+    <div class="box"><div class="n">1</div><div class="t">Client locks a bounty</div><div class="d">Task hash, agent identity, and 0G go into the escrow contract. Capybara keeps the key.</div><div class="z">0G Galileo, ProofEscrow.sol</div></div>
+    <div class="box"><div class="n">2</div><div class="t">Beagle does the work</div><div class="d">Inference runs on 0G Compute with verify_tee. The provider's TEE signs input, model, and output.</div><div class="z">0G Compute Router, 0GM-1.0-35B</div></div>
+    <div class="box"><div class="n">3</div><div class="t">Beagle stamps a proof</div><div class="d">A sealed Agentic ID replies with X-Agent-Proof, signed by a key that exists only inside its TEE.</div><div class="z">0G Agentic ID, ERC-7857 #383</div></div>
+    <div class="box"><div class="n">4</div><div class="t">Capybara pays on proof</div><div class="d">The contract recovers the signer, matches getAgentSeal, and opens the chest. Forged or replayed seals are refused.</div><div class="z">settleWithSeal, same digest as ERC-8004 reputation</div></div>
   </div>
-  <div class="rule">Anyone can verify a seal offline, with no gas. The same seal can settle payment and earn on-chain reputation.</div>
-  <div class="foot"><span>Solution</span><span>3 / 4</span></div>
+  <div class="rule">Anyone can verify a seal offline with no gas. The same seal settles payment and earns on-chain reputation.</div>
+  <div class="foot"><span>The solution</span><span>3 / 4</span></div>
 </section>
 
 <section class="slide s4">
@@ -101,38 +97,35 @@
     <h2>Live on Galileo today</h2>
     <ul class="proof-list">
       <li><b>Sealed Beagle</b> is Agentic ID #383, deployed through the 0G attestor. It registered its own signed service from inside the TEE.</li>
-      <li><b>Escrow paid</b> on a real X-Agent-Proof. A replayed seal reverted with "seal reused". A forged receipt reverted with "bad proof".</li>
-      <li><b>Both products</b>: TEE-verified inference on 0G Compute, and ERC-7857 identity with ERC-8004-compatible proofs.</li>
+      <li><b>The chest opened</b> on a real X-Agent-Proof. A replayed seal was refused with "seal reused". A forged receipt was refused with "bad proof".</li>
+      <li><b>Both 0G products</b>: TEE-verified inference on 0G Compute, and ERC-7857 identity with ERC-8004-compatible proofs.</li>
       <li><b>Next</b>: reviews gated by the same seal, multi-hop jobs where Beagle hires a checker, and receipts for customer-facing bots.</li>
     </ul>
-    <p class="mint">Pay-on-proof is the settlement layer the agent economy is missing. 0G is the only stack where the proof exists at every layer.</p>
+    <p class="green" style="font-weight:800">Pay-on-proof is the settlement layer the agent economy is missing. 0G is the stack where the proof exists at every layer.</p>
   </div>
   <div class="receipt">
-    <div>job #5 / sealed Beagle / 0.005 0G</div>
+    <div class="seal" id="seal4"></div>
+    <div>Job #5, sealed Beagle, 0.005 0G</div>
     <div class="ok">X-Agent-Proof signer matches getAgentSeal(383)</div>
-    <div class="ok">settleWithSeal → paid / tx 0x3d21…7552</div>
-    <div class="bad">replay on job #4 → reverted: seal reused</div>
-    <div class="bad">forged receipt → reverted: bad proof</div>
-    <div style="margin-top:10px">escrow 0xac8f…fb95 / chain 16602</div>
-    <div>github: hack-0gtaipei</div>
+    <div class="ok">settleWithSeal paid, tx 0x3d21…7552</div>
+    <div class="bad">Replay on job #4 refused: seal reused</div>
+    <div class="bad">Forged receipt refused: bad proof</div>
+    <div class="dim" style="margin-top:8px">Escrow 0xac8f…fb95 on chain 16602</div>
   </div>
-  <div class="seal" id="seal4"></div>
-  <div class="foot"><span>Proof</span><span>4 / 4</span></div>
+  <div class="foot"><span>The proof</span><span>4 / 4</span></div>
 </section>
 
-</div>
 <div class="nav">← → to move</div>
-<script src="/sprites.js"></script>
-<script>
-document.getElementById("b1").innerHTML = spriteSVG(SPRITES.beagle.happy, 10);
-document.getElementById("c1").innerHTML = spriteSVG(SPRITES.capy.idle, 10);
-document.getElementById("v1").innerHTML = spriteSVG(SPRITES.vault, 7);
-document.getElementById("bag1").innerHTML = spriteSVG(SPRITES.bag, 6);
-document.getElementById("seal4").innerHTML = spriteSVG(SPRITES.seal, 9);
+<script type="module">
+import { beagleSVG, capySVG, bagSVG, chestSVG, sealSVG, sceneSVG } from "/art.js";
+const $ = (id) => document.getElementById(id);
+$("bg1").innerHTML = sceneSVG(1600, 900);
+$("b1").innerHTML = beagleSVG("happy", 300); $("c1").innerHTML = capySVG("idle", 300); $("ch1").innerHTML = chestSVG(true, 190); $("bag1").innerHTML = bagSVG(90);
+$("b2").innerHTML = beagleSVG("sad", 220); $("seal4").innerHTML = sealSVG(96);
 const slides = [...document.querySelectorAll(".slide")]; let i = 0;
-const q = Number(new URLSearchParams(location.search).get("slide")); if (q >= 1 && q <= slides.length) { i = q - 1; slides.forEach((s, k) => s.classList.toggle("on", k === i)); }
 const show = (n) => { i = (n + slides.length) % slides.length; slides.forEach((s, k) => s.classList.toggle("on", k === i)); };
-addEventListener("keydown", (e) => { if (["ArrowRight", " ", "PageDown"].includes(e.key)) show(i + 1); if (["ArrowLeft", "PageUp"].includes(e.key)) show(i - 1); });
+const q = Number(new URLSearchParams(location.search).get("slide")); if (q >= 1 && q <= slides.length) show(q - 1);
+addEventListener("keydown", (e) => { if (["ArrowRight"," ","PageDown"].includes(e.key)) show(i + 1); if (["ArrowLeft","PageUp"].includes(e.key)) show(i - 1); });
 addEventListener("click", () => show(i + 1));
 </script>
 </body>

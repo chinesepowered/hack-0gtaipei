@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>art test</title>
+<style>body{margin:0;background:#FFF6EC;font-family:sans-serif;padding:20px}.row{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}.row div{text-align:center;font-size:12px;color:#8A7660}.scene{position:relative;height:300px;border-radius:24px;overflow:hidden;margin-top:10px}.scene .bg{position:absolute;inset:0}.scene .a{position:absolute;bottom:26px}</style></head>
+<body>
+<div class="row" id="b"></div>
+<div class="row" id="c"></div>
+<div class="row" id="p"></div>
+<div class="scene"><div class="bg" id="bg"></div><div class="a" style="left:12%" id="s1"></div><div class="a" style="left:48%;bottom:40px" id="s2"></div><div class="a" style="right:10%" id="s3"></div></div>
+<script type="module">
+import { beagleSVG, capySVG, coinSVG, bagSVG, chestSVG, sealSVG, pawSVG, checkSVG, sceneSVG } from "/art.js";
+for (const e of ["idle","happy","working","sad"]) document.getElementById("b").insertAdjacentHTML("beforeend", `<div>${beagleSVG(e,180)}<br>beagle ${e}</div>`);
+for (const e of ["idle","happy","sad"]) document.getElementById("c").insertAdjacentHTML("beforeend", `<div>${capySVG(e,180)}<br>capy ${e}</div>`);
+document.getElementById("p").innerHTML = [coinSVG(48), bagSVG(80), chestSVG(false,140), chestSVG(true,140), sealSVG(90), sealSVG(90,false), pawSVG(40), checkSVG(30), checkSVG(30,false)].map(s=>`<div>${s}</div>`).join("");
+document.getElementById("bg").innerHTML = sceneSVG(1200,300);
+document.getElementById("s1").innerHTML = beagleSVG("happy",200);
+document.getElementById("s2").innerHTML = chestSVG(true,150);
+document.getElementById("s3").innerHTML = capySVG("idle",200);
+</script>
+</body></html>
