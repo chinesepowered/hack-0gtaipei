@@ -100,3 +100,7 @@ Demo the sealed one. Keep the key one as the fallback.
 - **Sealed Beagle** is 0G Agentic ID #383. Its code runs inside a TEE sandbox that 0G's attestor provisioned, and its signing key was derived inside that TEE by 0G's key service. Nobody outside can read it, including the owner. Every reply is stamped by the sealed proxy with an X-Agent-Proof that names which agent, which runtime, which exact exchange, and who may redeem it. The escrow checks that stamp against `getAgentSeal(383)` on chain.
 
 Key mode answers "did a model really produce this." Sealed mode also answers "did this specific agent, unmodified, serve this specific client." The escrow needs the second to pay safely. If a judge asks why both exist: key mode is the baseline any agent can use today, sealed mode is what 0G's identity layer adds on top.
+
+## After the event
+
+Everything is shut down: the local server is stopped, the sealed Beagle's container is stopped so it no longer bills the sandbox balance, and every unsettled escrow job was refunded to the deployer. Nothing on chain changes. To bring the live demo back for a judge: `node scripts/agentic-start.mjs`, then `pnpm start`.

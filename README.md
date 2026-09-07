@@ -107,7 +107,7 @@ The key-signed mode replaces the TEE box with a local agent process that calls t
 | AgenticID contract used as seal domain | `0x5BB50987521A3fb7Da6Cd6aCC0ad1061D975B24A` |
 | Sealed Beagle, Agentic ID | `#383` |
 | Sealed Beagle, AgentSeal and payout address | `0x9891fa22308e1dc4570a9df51af89f4b1c092c0b` |
-| Sealed Beagle, signed card | `http://8080-e491a14b-8caa-4d44-b57d-54587ad1e9e5.35-225-105-127.sslip.io:4000/hello` |
+| Sealed Beagle, signed card | `http://8080-e491a14b-8caa-4d44-b57d-54587ad1e9e5.35-225-105-127.sslip.io:4000/hello`. The TEE container is stopped after the hackathon to stop per-minute billing; `node scripts/agentic-start.mjs` brings it back in about two minutes. Its identity, seal address, and every settlement below stay verifiable on chain. |
 | Sealed Beagle, signed task service | `POST …:4000/api/answer` with `{"task": "…"}`. The agent registered this itself from inside the TEE (job #5 below). It does not survive a container restart, so it may be absent; `/hello` is always sealed. |
 | Job #5 settled by X-Agent-Proof over `/api/answer` | tx `0x3d212b81363d7b9452074d96edf12418091e246486628208b34e11c0aab87552` |
 | Job #3 settled by X-Agent-Proof over `/hello` | tx `0x0daba338aaf048ddc715eec81e01a98fe4500f6bd18c2d60309f1176997aab51` |
@@ -117,6 +117,8 @@ The key-signed mode replaces the TEE box with a local agent process that calls t
 | Forged receipt | reverted with `bad proof` |
 
 ## Verify a seal yourself, no gas
+
+The live endpoint below only answers while the sealed container is running (see the note in the table above). Without it, verify from the chain and the archive instead: open the settlement transactions on chainscan, read `getAgentSeal(383)` on the AgenticID contract, and fetch the archived receipt bundle for job #14 from 0G Storage by its root hash. The bundle contains the full X-Agent-Proof header fields, so the digest check below works on it unchanged.
 
 ```bash
 curl -si -H "X-Client-Address: 0xYOU" \
