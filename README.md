@@ -4,6 +4,8 @@
 
 Beagle is the worker agent. Capybara is the escrow. One seal moves the coins.
 
+![Pinky Promise demo](docs/demo.png)
+
 - **Demo:** `pnpm start`, then open `http://localhost:3000`. The stage script is in [demo.md](demo.md).
 - **Pitch:** `/slides` (English) and `/slides_cn` (Traditional Chinese), six slides, arrow keys to move. Slides 5 and 6 are the two-modes comparison and the expected questions, for Q&A.
 
@@ -22,7 +24,7 @@ Reputation does not fix this on its own. One study of the ERC-8004 ecosystem fou
 | 1 | Client | Locks a bounty in the escrow with the task hash and the agent's identity | 0G Galileo, `ProofEscrow.sol` |
 | 2 | Beagle | Runs the task on 0G Compute with `verify_tee`. The provider's TEE signs input, model, and output | 0G Compute Router, `0gm-1.0-35b-a3b` |
 | 3 | Beagle | Returns a proof. A sealed Agentic ID replies with an `X-Agent-Proof` header signed by a key that exists only inside its TEE | 0G Agentic ID, ERC-7857 #383 |
-| 4 | Capybara | Recovers the signer on chain, matches it to `getAgentSeal(agentId)`, and pays. Forged or replayed proofs revert | `settleWithSeal()` |
+| 4 | Capybara | Recovers the signer on chain, matches it to `getAgentSeal(agentId)`, and pays. Forged or replayed proofs revert | 0G Chain, `settleWithSeal()` |
 | 5 | Escrow | Archives the receipt bundle (task, reply, seal, settlement tx) as an immutable file. The root hash is the durable pointer | 0G Storage |
 | 6 | Anyone | Fetches the receipt back from the network by root hash and re-checks it offline with no gas, without our server | 0G Storage, browser, curl |
 
@@ -71,7 +73,7 @@ flowchart LR
   UI -. "the same proof can rate the agent" .-> REP
 ```
 
-Three layers do three different jobs: the TEE proves who said it, Storage keeps what was said, Chain records that it was paid.
+Four pieces, four jobs: Compute proves the inference, the Agentic ID seal proves who served, Chain records that it was paid, Storage keeps what was said.
 
 The key-signed mode replaces the TEE box with a local agent process that calls the Router directly and signs its own receipt. The contract handles both in `ProofEscrow.sol`.
 
@@ -106,7 +108,7 @@ The key-signed mode replaces the TEE box with a local agent process that calls t
 | Sealed Beagle, Agentic ID | `#383` |
 | Sealed Beagle, AgentSeal and payout address | `0x9891fa22308e1dc4570a9df51af89f4b1c092c0b` |
 | Sealed Beagle, signed card | `http://8080-e491a14b-8caa-4d44-b57d-54587ad1e9e5.35-225-105-127.sslip.io:4000/hello` |
-| Sealed Beagle, signed task service | `POST …:4000/api/answer` with `{"task": "…"}` |
+| Sealed Beagle, signed task service | `POST …:4000/api/answer` with `{"task": "…"}`. The agent registered this itself from inside the TEE (job #5 below). It does not survive a container restart, so it may be absent; `/hello` is always sealed. |
 | Job #5 settled by X-Agent-Proof over `/api/answer` | tx `0x3d212b81363d7b9452074d96edf12418091e246486628208b34e11c0aab87552` |
 | Job #3 settled by X-Agent-Proof over `/hello` | tx `0x0daba338aaf048ddc715eec81e01a98fe4500f6bd18c2d60309f1176997aab51` |
 | Job #6 settled by key-signed receipt, testnet Router | tx `0x121cbd67019d16aafeebfdf88f1d00b60c434027054438542086b30bf9fd6f7c` |
