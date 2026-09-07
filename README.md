@@ -4,6 +4,9 @@
 
 Beagle is the worker agent. Capybara is the escrow. One seal moves the coins.
 
+- **Demo:** `pnpm start`, then open `http://localhost:3000`. The stage script is in [demo.md](demo.md).
+- **Pitch:** `/slides` (English) and `/slides_cn` (Traditional Chinese), four slides, arrow keys to move.
+
 ## The problem
 
 Agents are becoming economic actors. They take jobs, charge for them, and hire other agents. Between those hops nobody is watching, so the party paying has two bad options: trust the agent's word, or trust the operator who could swap the model, edit the prompt, or invent the answer after the fact.
@@ -72,6 +75,17 @@ The key-signed mode replaces the TEE box with a local agent process that calls t
 | `src/sealed.mjs` | Calls the sealed agent with `X-Client-Address`, parses the `X-Agent-Proof` header, and recovers the signer with the SDK's `buildServeProofMessageHash`. |
 | `contracts/ProofEscrow.sol` | Verifies both proof types on chain. `settleWithSeal` reads `getAgentSeal()` from the AgenticID contract, requires the proof's submitter to be the job's client, and marks each seal digest used so it cannot pay twice. |
 | `scripts/ask-sealed.mjs` | Owner channel to the sealed agent. Used once to ask it to expose a signed `/api/answer` service, which it registered itself from inside the TEE. |
+
+## Repo layout
+
+| Path | What |
+|---|---|
+| `contracts/ProofEscrow.sol` | The escrow. Compiled with solc via `scripts/compile.mjs`, deployed with `scripts/deploy.mjs`. |
+| `src/server.mjs` | Demo server: creates jobs, runs the agent, submits settlements, verifies receipts. |
+| `src/router.mjs`, `src/agent.mjs`, `src/sealed.mjs` | 0G Compute client, key-signed worker, sealed-agent client. |
+| `web/index.html` | The demo page. `web/art.js` draws Beagle, Capybara, the chest, and the seal as procedural SVG. `web/art-test.html` previews every expression. |
+| `web/slides.html`, `web/slides_cn.html` | Pitch decks. |
+| `demo.md` | What to click and say on stage. |
 
 ## Deployed on 0G Galileo
 
