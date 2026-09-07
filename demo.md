@@ -18,7 +18,7 @@ pnpm start          # server on :3000, prints router + escrow + sealed agent id
 - Deployer balance should be above 0.5 0G. It was 3.6 0G after the last top-up.
 - Close every other tab. Zoom the browser to 110 percent so the back row can read the bubble.
 
-Do not chat with the sealed Beagle before the demo. Each message costs mainnet Router credit, and that account is empty.
+Everything in the demo runs on testnet: the escrow and jobs on Galileo, the key-signed Beagle on the testnet Router with qwen2.5-omni. The only piece tied to mainnet is the sealed Beagle's own model key inside its TEE, set at deploy time. That account is empty, so its `/api/answer` text comes back as an error. The seal on that reply is still valid and still pays. Do not bother chatting with it before the demo; it cannot answer.
 
 ## The talk track
 
