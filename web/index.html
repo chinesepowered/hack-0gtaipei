@@ -126,7 +126,7 @@ function reset() { state.jobId=null; state.receipt=null; state.sealed=null; $("j
   const row = { escrow: link(i.escrowUrl, short(i.escrow)), "beagle (key)": link(i.agentUrl, short(i.agent)) + " · " + (+i.agentBalance).toFixed(4) + " 0G" };
   if (i.sealed) row["sealed #"+i.sealed.agentId] = link(i.sealed.sealUrl, short(i.sealed.agentSeal)) + " · " + (+i.sealed.sealBalance).toFixed(4) + " 0G";
   kv($("info"), row);
-  log(`chain 0G Galileo (${i.chainId}) · escrow ${i.escrow}`, "dim");
+  log(`chain 0G Galileo (${i.chainId}) · escrow ${i.escrow} · router ${i.router.net} / ${i.router.model}`, "dim");
   if (i.sealed) log(`sealed agent #${i.sealed.agentId} · seal ${i.sealed.agentSeal} · ${link(i.sealed.url+"/hello","/hello")}`, "dim");
   else $("modeSealed").disabled = true;
   setMode("key");
@@ -146,7 +146,7 @@ $("btnJob").onclick = async () => {
 $("btnWork").onclick = async () => {
   enable(["btnWork"], false); face("beagle","🐕","working");
   if (state.mode === "key") {
-    log(`→ Beagle calls 0G Compute Router · 0gm-1.0-35b-a3b · trust-mode verified · verify_tee:true …`);
+    log(`→ Beagle calls 0G Compute Router (${state.info.router.net}) · ${state.info.router.model} · trust-mode verified · verify_tee:true …`);
     const r = await post("/api/work", { jobId: state.jobId, task: state.task, mode: "key" });
     if (r.error) { log("✗ "+r.error, "bad"); face("beagle","🐶"); enable(["btnWork"], true); return; }
     state.receipt = r.receipt; state.output = r.output; state.trace = r.trace;

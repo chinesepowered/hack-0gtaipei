@@ -46,6 +46,10 @@ Two worker modes are demoed side by side:
 | Example: replayed seal rejected | revert `seal reused` |
 | Example: key-signed receipt settled | tx `0xe7f46e03efa7300c519b92881f3ae36520713e047cc1ce5883d197a628947378` (escrow v1) |
 
+## Router network
+
+`ROUTER_NET=mainnet` uses `0gm-1.0-35b-a3b` on `router-api.0g.ai` (needs 0G deposited at pc.0g.ai). `ROUTER_NET=testnet` uses `qwen2.5-omni` on the testnet Router (deposit faucet 0G at pc.testnet.0g.ai). Both are TEE-attested and return `x_0g_trace.tee_verified`; the receipt format is identical. Example testnet run: job #6 tx `0x121cbd67019d16aafeebfdf88f1d00b60c434027054438542086b30bf9fd6f7c`.
+
 ## Run it
 
 ```bash

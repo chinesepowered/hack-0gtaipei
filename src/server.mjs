@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { parseEther, recoverMessageAddress, formatEther } from "viem";
 import { publicClient, wallet, feeOpts, escrowArtifact, explorerTx, explorerAddr, waitReceipt } from "./chain.mjs";
 import { workJob, agentAccount, hashText, receiptDigest } from "./agent.mjs";
+import { MODEL, ROUTER_NET, ROUTER_BASE } from "./router.mjs";
 import { sealedWork, sealedInfo } from "./sealed.mjs";
 
 const PORT = Number(process.env.PORT || 3000);
@@ -73,7 +74,7 @@ const server = http.createServer(async (req, res) => {
         publicClient.getBalance({ address: agentAccount.address }),
         s ? publicClient.getBalance({ address: s.agentSeal }) : Promise.resolve(0n),
       ]);
-      return json(res, 200, { escrow: ESCROW, escrowUrl: explorerAddr(ESCROW), client: client.account.address, agent: agentAccount.address, agentUrl: explorerAddr(agentAccount.address), clientBalance: formatEther(clientBal), agentBalance: formatEther(agentBal), chainId: 16602, sealed: s ? { ...s, sealBalance: formatEther(sealBal), sealUrl: explorerAddr(s.agentSeal) } : null });
+      return json(res, 200, { escrow: ESCROW, escrowUrl: explorerAddr(ESCROW), client: client.account.address, agent: agentAccount.address, agentUrl: explorerAddr(agentAccount.address), clientBalance: formatEther(clientBal), agentBalance: formatEther(agentBal), chainId: 16602, router: { net: ROUTER_NET, base: ROUTER_BASE, model: MODEL }, sealed: s ? { ...s, sealBalance: formatEther(sealBal), sealUrl: explorerAddr(s.agentSeal) } : null });
     }
     if (req.method === "POST" && url.pathname === "/api/job") { const { task, amount = "0.01", mode = "key" } = await readBody(req); return json(res, 200, await createJob(task, amount, mode)); }
     if (req.method === "POST" && url.pathname === "/api/work") {

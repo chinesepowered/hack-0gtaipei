@@ -1,8 +1,13 @@
 import "dotenv/config";
 
-const BASE = process.env.ROUTER_MAINNET_URL || "https://router-api.0g.ai/v1";
-const KEY = process.env.ROUTER_MAINNET_KEY;
-export const MODEL = process.env.MODEL || "0gm-1.0-35b-a3b";
+// ROUTER_NET=mainnet (0GM, TEE) or testnet (qwen2.5-omni, TEE) — both give x_0g_trace + tee_verified
+const NET = process.env.ROUTER_NET || "mainnet";
+const BASE = NET === "testnet" ? (process.env.ROUTER_TESTNET_URL || "https://router-api-testnet.integratenetwork.work/v1") : (process.env.ROUTER_MAINNET_URL || "https://router-api.0g.ai/v1");
+const KEY = NET === "testnet" ? process.env.ROUTER_TESTNET_KEY : process.env.ROUTER_MAINNET_KEY;
+export const MODEL = process.env.MODEL || (NET === "testnet" ? "qwen2.5-omni" : "0gm-1.0-35b-a3b");
+export const ROUTER_NET = NET;
+export const ROUTER_BASE = BASE;
+console.log(`router: ${NET} ${BASE} model=${MODEL}`);
 
 /**
  * Verified inference on 0G Compute Router.
