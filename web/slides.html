@@ -98,9 +98,9 @@
     <div class="box"><div class="n">1</div><div class="t">Client locks a bounty</div><div class="d">Task hash, agent identity, and 0G go into the escrow contract. Capybara keeps the key.</div><div class="z">0G Galileo, ProofEscrow.sol</div></div>
     <div class="box"><div class="n">2</div><div class="t">Beagle does the work</div><div class="d">Inference runs on 0G Compute with verify_tee. The provider's TEE signs input, model, and output.</div><div class="z">0G Compute Router, 0GM-1.0-35B</div></div>
     <div class="box"><div class="n">3</div><div class="t">Beagle stamps a proof</div><div class="d">A sealed Agentic ID replies with X-Agent-Proof, signed by a key that exists only inside its TEE.</div><div class="z">0G Agentic ID, ERC-7857 #383</div></div>
-    <div class="box"><div class="n">4</div><div class="t">Capybara pays on proof</div><div class="d">The contract recovers the signer, matches getAgentSeal, and opens the chest. Forged or replayed seals are refused.</div><div class="z">settleWithSeal, same digest as ERC-8004 reputation</div></div>
+    <div class="box"><div class="n">4</div><div class="t">Capybara pays, then files the receipt</div><div class="d">The contract recovers the signer, matches getAgentSeal, and opens the chest. Forged or replayed seals are refused. The receipt bundle is archived on 0G Storage under its root hash.</div><div class="z">settleWithSeal on 0G Chain, receipt on 0G Storage</div></div>
   </div>
-  <div class="rule">Anyone can verify a seal offline with no gas. The same seal settles payment and earns on-chain reputation.</div>
+  <div class="rule">TEE proves who said it. Storage keeps what was said. Chain records that it was paid. Anyone can fetch the receipt and verify it without us.</div>
   <div class="foot"><span>The solution</span><span>3 / 6</span></div>
 </section>
 
@@ -110,7 +110,7 @@
     <ul class="proof-list">
       <li><b>Sealed Beagle</b> is Agentic ID #383, deployed through the 0G attestor. It registered its own signed service from inside the TEE.</li>
       <li><b>The chest opened</b> on a real X-Agent-Proof. A replayed seal was refused with "seal reused". A forged receipt was refused with "bad proof".</li>
-      <li><b>Both 0G products</b>: TEE-verified inference on 0G Compute, and ERC-7857 identity with ERC-8004-compatible proofs.</li>
+      <li><b>Four 0G pieces, four jobs</b>: Compute proves the inference, Agentic ID proves who served, Chain pays, Storage keeps the receipt so it outlives our server.</li>
       <li><b>Next</b>: reviews gated by the same seal, multi-hop jobs where Beagle hires a checker, and receipts for customer-facing bots.</li>
     </ul>
     <p class="green" style="font-weight:800">Pay-on-proof is the settlement layer the agent economy is missing. 0G is the stack where the proof exists at every layer.</p>
@@ -122,6 +122,7 @@
     <div class="ok">settleWithSeal paid, tx 0x3d21…7552</div>
     <div class="bad">Replay on job #4 refused: seal reused</div>
     <div class="bad">Forged receipt refused: bad proof</div>
+    <div class="ok">Receipt archived on 0G Storage, root 0x6ac4…fa27</div>
     <div class="dim" style="margin-top:8px">Escrow 0xac8f…fb95 on chain 16602</div>
   </div>
   <div class="foot"><span>The proof</span><span>4 / 6</span></div>

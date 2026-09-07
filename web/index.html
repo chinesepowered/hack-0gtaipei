@@ -178,9 +178,17 @@
     </section>
   </div>
 
-  <aside class="card" aria-live="polite">
+  <aside>
+    <section class="card" id="archiveCard" hidden>
+      <h3>Receipt archive on 0G Storage</h3>
+      <div id="archiveBody" class="empty">Uploading the receipt bundle…</div>
+      <div class="row" style="margin-top:12px"><button class="btn sand" id="btnFetch" disabled>Fetch it back from 0G Storage and verify</button></div>
+      <div class="checks" id="archiveChecks"></div>
+    </section>
+    <section class="card" aria-live="polite">
     <h3>What just happened</h3>
     <div class="feed" id="feed"></div>
+    </section>
   </aside>
 </div>
 </div>
@@ -224,7 +232,8 @@ function setMode(m) {
   reset();
 }
 function reset() {
-  Object.assign(state, { jobId:null, receipt:null, sealed:null, output:null });
+  Object.assign(state, { jobId:null, receipt:null, sealed:null, output:null, trace:null, rootHash:null });
+  clearInterval(archivePoll); $("archiveCard").hidden = true;
   ["st1","st2","st3"].forEach((i) => status(i, "")); ["s1","s2","s3"].forEach((i) => $(i).classList.remove("done"));
   $("output").textContent = "Nothing yet. Beagle is napping."; $("trace").innerHTML = ""; $("checks").innerHTML = ""; $("seal").className = ""; $("seal").innerHTML = "";
   $("proofBody").innerHTML = `<p class="empty">Appears after Beagle works. Anyone can check it, no gas needed.</p>`;
@@ -260,7 +269,7 @@ $("btnWork").onclick = async () => {
     say(`Beagle is asking <em>${state.info.router.model}</em> on 0G Compute…`); feed(`Beagle calls the 0G Compute Router with verify_tee on.`);
     const r = await post("/api/work", { jobId: state.jobId, task: state.task, mode: "key" });
     if (r.error) { status("st2", r.error, "bad"); feed(r.error, "bad"); beagle("sad"); enable(["btnWork"], true); return; }
-    state.receipt = r.receipt; state.output = r.output; $("output").textContent = r.output;
+    state.receipt = r.receipt; state.output = r.output; state.trace = r.trace; $("output").textContent = r.output;
     kv($("trace"), { model: r.trace.model, provider: short(r.trace.provider), "chat id": r.trace.chatId, "TEE verified": r.trace.teeVerified, latency: r.trace.latencyMs + " ms" });
     $("proofBody").innerHTML = `<div class="kv" style="margin-top:0"><div class="k">type</div><div class="v">receipt signed by Beagle's key</div><div class="k">job</div><div class="v">#${r.receipt.jobId}</div><div class="k">task hash</div><div class="v">${short(r.receipt.taskHash)}</div><div class="k">answer hash</div><div class="v">${short(r.receipt.outputHash)}</div><div class="k">TEE proof hash</div><div class="v">${short(r.receipt.proofHash)}</div><div class="k">signer</div><div class="v">${short(r.receipt.agent)}</div><div class="k">signature</div><div class="v">${short(r.receipt.signature)}</div></div>`;
     feed(`TEE provider ${short(r.trace.provider)} signed the inference. tee_verified = ${r.trace.teeVerified}.`, r.trace.teeVerified ? "ok" : "bad");
@@ -284,12 +293,13 @@ $("btnWork").onclick = async () => {
 $("btnSettle").onclick = async () => {
   enable(["btnSettle"], false); status("st3", "submitting…"); say(`Capybara is checking the proof on chain…`);
   let r;
-  if (state.mode === "key") { feed(`settle: the contract recovers the signer and compares it with the job's agent.`); r = await post("/api/settle", { mode:"key", receipt: state.receipt }); }
-  else { feed(`settleWithSeal: the contract rebuilds the seal digest and checks getAgentSeal(${state.sealed.proof.agentId}).`); r = await post("/api/settle", { mode:"sealed", jobId: state.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof }); }
+  if (state.mode === "key") { feed(`settle: the contract recovers the signer and compares it with the job's agent.`); r = await post("/api/settle", { mode:"key", receipt: state.receipt, task: state.task, output: state.output, trace: state.trace }); }
+  else { feed(`settleWithSeal: the contract rebuilds the seal digest and checks getAgentSeal(${state.sealed.proof.agentId}).`); r = await post("/api/settle", { mode:"sealed", jobId: state.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof, task: state.task, output: state.output, exchange: state.sealed.exchange }); }
   if (r.status === "success") {
     feed(`Paid. Capybara opened the chest and Beagle got the bounty. ${link(r.txUrl, "See the transaction")}.`, "ok");
     $("s3").classList.add("done"); status("st3", "paid", "ok"); capy("happy"); chest(false); bag("to-beagle"); burst(); setTimeout(() => beagle("happy"), 800);
     say(`Proof accepted. <em>Beagle got paid.</em>`); enable(["btnFake"], false); if (state.mode === "sealed") enable(["btnReplay"], true);
+    watchArchive(state.jobId);
   } else { feed(`Rejected: ${r.error}.`, "bad"); status("st3", r.error, "bad"); capy("sad"); say(`Capybara says no: <em>${r.error}</em>.`); enable(["btnSettle"], true); }
 };
 
@@ -309,6 +319,34 @@ $("btnReplay").onclick = async () => {
   const r = await post("/api/settle", { mode:"sealed", jobId: j.jobId, outputHash: state.sealed.outputHash, proof: state.sealed.proof });
   if (r.status === "success") feed("A replayed seal was accepted. That must never happen.", "bad");
   else { feed(`Job #${j.jobId} rejected the replay: ${r.error}. One serve, one seal, one payout.`, "ok"); capy("sad"); say(`Capybara refuses: <em>${r.error}</em>.`); setTimeout(() => capy("idle"), 1300); }
+};
+
+let archivePoll = null;
+function watchArchive(jobId) {
+  $("archiveCard").hidden = false; $("archiveBody").className = "empty"; $("archiveBody").textContent = "Uploading the receipt bundle to 0G Storage, waiting for finality…"; $("archiveChecks").innerHTML = ""; enable(["btnFetch"], false);
+  feed(`Archiving the receipt on 0G Storage…`, "dim");
+  clearInterval(archivePoll);
+  archivePoll = setInterval(async () => {
+    const a = await (await fetch("/api/archive/" + jobId)).json();
+    if (a.status === "done") {
+      clearInterval(archivePoll); state.rootHash = a.rootHash;
+      $("archiveBody").className = "kv"; $("archiveBody").style.marginTop = "0";
+      $("archiveBody").innerHTML = `<div class="k">root hash</div><div class="v">${link(a.url, a.rootHash)}</div><div class="k">size</div><div class="v">${a.bytes} bytes</div><div class="k">storage tx</div><div class="v">${link("https://chainscan-galileo.0g.ai/tx/" + a.txHash, short(a.txHash))}</div>`;
+      feed(`Receipt archived on 0G Storage. Root hash ${short(a.rootHash)}. ${link(a.url, "See it on storagescan")}.`, "ok");
+      enable(["btnFetch"], true);
+    } else if (a.status === "failed") { clearInterval(archivePoll); $("archiveBody").textContent = "Archive failed: " + a.error; feed("Archive failed: " + a.error, "bad"); }
+  }, 3000);
+}
+$("btnFetch").onclick = async () => {
+  enable(["btnFetch"], false); feed(`Fetching the receipt back from 0G Storage by root hash, not from our server…`);
+  const r = await post("/api/fetch-receipt", { rootHash: state.rootHash });
+  const v = r.verification || {};
+  const checks = r.bundle.mode === "sealed"
+    ? chk("Fetched from the network in " + r.fetchMs + " ms", true) + chk("The reply matches the exchange hash in the seal", v.exchangeMatches) + chk("The signer is the AgentSeal registered on chain", v.signerMatches) + chk("The job is settled on chain", !!r.onChain?.settled)
+    : chk("Fetched from the network in " + r.fetchMs + " ms", true) + chk("The answer matches the receipt", v.outputMatches) + chk("The signature is Beagle's", v.signerMatches) + chk("The job is settled on chain", !!r.onChain?.settled);
+  $("archiveChecks").innerHTML = checks;
+  feed(v.ok ? `The archived receipt verifies on its own: TEE said it, Storage kept it, Chain paid it.` : `Archived receipt failed: ${(v.reasons || []).join("; ")}.`, v.ok ? "ok" : "bad");
+  enable(["btnFetch"], true);
 };
 
 const verify = async (output) => {

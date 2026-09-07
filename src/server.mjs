@@ -6,12 +6,21 @@ import { publicClient, wallet, feeOpts, escrowArtifact, explorerTx, explorerAddr
 import { workJob, agentAccount, hashText, receiptDigest } from "./agent.mjs";
 import { MODEL, ROUTER_NET, ROUTER_BASE } from "./router.mjs";
 import { sealedWork, sealedInfo, verifySeal } from "./sealed.mjs";
+import { uploadReceipt, fetchReceipt, storageScan } from "./storage.mjs";
 
 const PORT = Number(process.env.PORT || 3000);
 const ESCROW = process.env.ESCROW_ADDRESS;
 const { abi } = escrowArtifact();
 const client = wallet(process.env.DEPLOYER_KEY); // demo "client" wallet that funds jobs and relays settlements
 
+// receipt archive on 0G Storage: jobId -> { status, rootHash, txHash, url, error }
+const archives = new Map();
+function archive(jobId, bundle) {
+  archives.set(String(jobId), { status: "uploading" });
+  uploadReceipt(bundle)
+    .then((r) => archives.set(String(jobId), { status: "done", ...r }))
+    .catch((e) => { console.error("archive failed", e.message); archives.set(String(jobId), { status: "failed", error: e.message }); });
+}
 const json = (res, code, body) => { res.writeHead(code, { "Content-Type": "application/json" }); res.end(JSON.stringify(body, (_, v) => (typeof v === "bigint" ? v.toString() : v))); };
 const readBody = (req) => new Promise((r) => { let b = ""; req.on("data", (c) => (b += c)); req.on("end", () => r(b ? JSON.parse(b) : {})); });
 const revertReason = (e) => { const m = String(e.shortMessage || e.message); const r = m.match(/reason:\s*\n?([^\n]+)/); return r ? r[1].trim() : m; };
@@ -86,9 +95,33 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, await workJob({ jobId, task, escrow: ESCROW }));
     }
     if (req.method === "POST" && url.pathname === "/api/settle") {
-      const { receipt, mode = "key", jobId, outputHash, proof } = await readBody(req);
-      try { return json(res, 200, mode === "sealed" ? await settleWithSeal(jobId, outputHash, proof) : await settle(receipt)); }
+      const { receipt, mode = "key", jobId, outputHash, proof, task, output, exchange, trace } = await readBody(req);
+      try {
+        const r = mode === "sealed" ? await settleWithSeal(jobId, outputHash, proof) : await settle(receipt);
+        if (r.status === "success") {
+          const id = mode === "sealed" ? jobId : receipt.jobId;
+          archive(id, { kind: "pinky-promise-receipt", version: 1, chainId: 16602, escrow: ESCROW, jobId: String(id), mode, task: task ?? null, output: output ?? null, exchange: exchange ?? null,
+            ...(mode === "sealed" ? { proof, agenticId: process.env.AGENTIC_ID_ADDRESS } : { receipt, trace: trace ?? null }), settlementTx: r.tx, archivedAt: new Date().toISOString() });
+          r.archive = { status: "uploading" };
+        }
+        return json(res, 200, r);
+      }
       catch (e) { return json(res, 200, { status: "reverted", error: revertReason(e) }); }
+    }
+    if (req.method === "GET" && url.pathname.startsWith("/api/archive/")) return json(res, 200, archives.get(url.pathname.split("/").pop()) || { status: "none" });
+    if (req.method === "POST" && url.pathname === "/api/fetch-receipt") {
+      const { rootHash } = await readBody(req);
+      const t0 = Date.now();
+      const bundle = await fetchReceipt(rootHash);
+      let verification = null;
+      if (bundle.mode === "sealed") {
+        const onchainSeal = await publicClient.readContract({ address: bundle.agenticId || process.env.AGENTIC_ID_ADDRESS, abi: [{ type: "function", name: "getAgentSeal", stateMutability: "view", inputs: [{ type: "uint256" }], outputs: [{ type: "address" }] }], functionName: "getAgentSeal", args: [BigInt(bundle.proof.agentId)] });
+        verification = await verifySeal({ proof: bundle.proof, output: bundle.output, exchange: bundle.exchange, expectedSeal: onchainSeal });
+      } else if (bundle.receipt) {
+        verification = await verifyReceipt(bundle.receipt, bundle.output);
+      }
+      let onChain = null; try { onChain = await readJob(bundle.jobId); } catch {}
+      return json(res, 200, { rootHash, url: storageScan(rootHash), fetchMs: Date.now() - t0, bundle, verification, onChain });
     }
     if (req.method === "POST" && url.pathname === "/api/verify") {
       const { mode = "key", receipt, output, proof, exchange, jobId } = await readBody(req);

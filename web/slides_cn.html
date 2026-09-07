@@ -95,9 +95,9 @@
     <div class="box"><div class="n">1</div><div class="t">客戶鎖定賞金</div><div class="d">任務雜湊、指定 Agent 與 0G 代幣存入託管合約，鑰匙由 Capybara 保管。</div><div class="z">0G Galileo 測試網，ProofEscrow.sol</div></div>
     <div class="box"><div class="n">2</div><div class="t">Beagle 做事</div><div class="d">推理在 0G Compute 上執行並開啟 verify_tee，供應商的 TEE 對輸入、模型、輸出簽名。</div><div class="z">0G Compute Router，0GM-1.0-35B</div></div>
     <div class="box"><div class="n">3</div><div class="t">Beagle 蓋章</div><div class="d">具有 Agentic ID 的密封 Agent 回應時附上 X-Agent-Proof，由只存在 TEE 內的金鑰簽署。</div><div class="z">0G Agentic ID，ERC-7857 #383</div></div>
-    <div class="box"><div class="n">4</div><div class="t">Capybara 憑章放款</div><div class="d">合約還原簽章者、比對 getAgentSeal 後打開寶箱。偽造或重放的印章一律拒絕。</div><div class="z">settleWithSeal，與 ERC-8004 信譽同一摘要</div></div>
+    <div class="box"><div class="n">4</div><div class="t">Capybara 憑章放款，再歸檔收據</div><div class="d">合約還原簽章者、比對 getAgentSeal 後打開寶箱。偽造或重放的印章一律拒絕。收據包以根雜湊歸檔到 0G Storage。</div><div class="z">settleWithSeal 在 0G Chain，收據在 0G Storage</div></div>
   </div>
-  <div class="rule">任何人都能離線驗證印章，免 gas。同一枚印章既能結算付款，也能累積鏈上信譽。</div>
+  <div class="rule">TEE 證明是誰說的，Storage 保存說了什麼，Chain 記錄已經付款。任何人都能不經過我們取回收據並驗證。</div>
   <div class="foot"><span>方案</span><span>3 / 6</span></div>
 </section>
 
@@ -107,7 +107,7 @@
     <ul class="proof-list">
       <li><b>密封版 Beagle</b> 是 Agentic ID #383，透過 0G attestor 部署，並在 TEE 內自行註冊了簽章服務。</li>
       <li><b>寶箱已憑真實 X-Agent-Proof 打開。</b>重放印章被以「seal reused」拒絕，偽造收據被以「bad proof」拒絕。</li>
-      <li><b>同時用上兩者</b>：0G Compute 的 TEE 可驗證推理，以及 ERC-7857 身份與相容 ERC-8004 的證明。</li>
+      <li><b>四個 0G 元件，四種職責</b>：Compute 證明推理、Agentic ID 證明是誰服務、Chain 付款、Storage 保存收據，讓收據比我們的伺服器活得更久。</li>
       <li><b>下一步</b>：憑同一印章留評、多 Agent 多跳任務（Beagle 雇用檢查員）、客服機器人的對話收據。</li>
     </ul>
     <p class="green" style="font-weight:900">憑證明付款是 Agent 經濟缺少的結算層，而 0G 是每一層都有證明的技術棧。</p>
@@ -119,6 +119,7 @@
     <div class="ok">settleWithSeal 已付款，tx 0x3d21…7552</div>
     <div class="bad">job #4 重放遭拒：seal reused</div>
     <div class="bad">偽造收據遭拒：bad proof</div>
+    <div class="ok">收據已歸檔至 0G Storage，根雜湊 0x6ac4…fa27</div>
     <div class="dim" style="margin-top:8px">Escrow 0xac8f…fb95，chain 16602</div>
   </div>
   <div class="foot"><span>證明</span><span>4 / 6</span></div>

@@ -45,11 +45,12 @@ Say what you are about to click before you click it. Let each animation finish.
 2. **Send Beagle to work.** Say: "Beagle is Agentic ID 383, running inside a TEE sandbox that 0G's attestor provisioned. I'm calling its service with my address." Wait for the seal to slam onto the proof card. Say: "That header is the X-Agent-Proof. The signer matches the AgentSeal registered on chain for agent 383, and it names me as the only one who can redeem it."
 3. **Try a forged proof.** Say: "An impostor changes one hash." Capybara shakes its head. Read the rejection reason from the bubble.
 4. **Submit proof.** Say: "Now the real seal." Coins fly to Beagle. Say: "Capybara rebuilt the digest on chain, recovered the signer, matched getAgentSeal, and paid the seal address. That's a real transaction on Galileo." Click the transaction link if there's time.
-5. **Replay the spent seal.** This button only unlocks after step 4, because a seal that has not been paid yet is still valid. Say: "Same seal, second job." Rejected with `seal reused`. Say: "One serve, one seal, one payout."
+5. **Wait for the archive card.** About fifteen seconds after the payout, the "Receipt archive on 0G Storage" card fills in with a root hash. Say: "The receipt bundle, task, reply, seal, and settlement tx, is now an immutable file on 0G Storage. That root hash is the durable pointer." Click **Fetch it back from 0G Storage and verify**. Say: "That came off the storage network by root hash, not from our server, and it verifies on its own. TEE said it, Storage kept it, Chain paid it." If the card is still uploading when you need to move on, skip it and show the root hash from the README instead.
+6. **Replay the spent seal.** This button only unlocks after step 4, because a seal that has not been paid yet is still valid. Say: "Same seal, second job." Rejected with `seal reused`. Say: "One serve, one seal, one payout."
 
-### 2:20 Slide 4, proof
+### 2:30 Slide 4, proof
 
-> All of this is live on Galileo now. Beagle registered its own signed service from inside the TEE. The chest opened on a real seal, a replay was refused, a forgery was refused. Both 0G products are in the loop: TEE-verified inference on 0G Compute, and ERC-7857 identity with ERC-8004-compatible proofs.
+> All of this is live on Galileo now. Beagle registered its own signed service from inside the TEE. The chest opened on a real seal, a replay was refused, a forgery was refused, and the receipt is archived on 0G Storage. Four 0G pieces, each doing a different job: Compute proves the inference, Agentic ID proves who served, Chain pays, Storage keeps the receipt.
 
 Close:
 
@@ -64,6 +65,7 @@ Close:
 | "Lock funds" hangs past 20 seconds | Galileo is slow to return receipts. Wait. The server retries for a minute. |
 | Bubble says `Insufficient balance` in key mode | The testnet Router account ran dry. Deposit at pc.testnet.0g.ai. The sealed mode still works because the seal does not need inference. |
 | Page shows no `agent #383` pill | Sealed Beagle is down. Demo key mode and say the sealed path is in the README with transaction hashes. |
+| Archive card stays on "uploading" past 40 seconds | The storage indexer is slow. Move on; the README has an archived root hash you can open on storagescan. |
 | Judges ask to verify a seal themselves | Give them the curl from the README's "Verify a seal yourself" section. The header comes back in one call. |
 
 ## What the sealed Beagle's answer text says
