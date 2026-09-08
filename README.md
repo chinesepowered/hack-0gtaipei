@@ -6,6 +6,7 @@ Beagle is the worker agent. Capybara is the escrow. One seal moves the coins.
 
 ![Pinky Promise demo](docs/demo.png)
 
+- **Video:** [`docs/submission_cn.mp4`](docs/submission_cn.mp4) — the pitch and a full live run, narrated in Mandarin (4:50).
 - **Demo:** `pnpm start`, then open `http://localhost:3000`. The stage script is in [demo.md](demo.md).
 - **Pitch:** `/slides` (English) and `/slides_cn` (Traditional Chinese), six slides, arrow keys to move. Slides 5 and 6 are the two-modes comparison and the expected questions, for Q&A.
 

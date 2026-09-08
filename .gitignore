@@ -5,3 +5,7 @@ out/
 agentlog.txt
 docs/video/clip*.mp4
 docs/video/list*.txt
+docs/video/raw/
+docs/video/*.mp3
+docs/video/*.png
+docs/submission_cn_full.mp4

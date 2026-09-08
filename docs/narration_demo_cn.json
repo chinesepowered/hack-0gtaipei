@@ -1,0 +1,61 @@
+{
+  "voice": "Lee Ting Ting (TW)",
+  "model": "eleven_multilingual_v2",
+  "segments": [
+    {
+      "id": "intro",
+      "action": "sealed",
+      "scroll": "top",
+      "text": "接下來是現場 demo。畫面左邊是 Beagle，我們的工人 Agent；右邊是 Capybara，也就是託管合約；中間是裝賞金的寶箱。上方可以看到，我們連的是 0G Galileo 測試網，而這隻 Beagle 的身份，是 Agentic ID 三八三號。"
+    },
+    {
+      "id": "lock",
+      "action": "click:#btnJob",
+      "scroll": "top",
+      "text": "第一步，客戶鎖定賞金。任務的雜湊、指定的 Agent、還有 0G 代幣，一起送上鏈。寶箱裝滿了，鑰匙由 Capybara 保管。這是一筆真實的鏈上交易。"
+    },
+    {
+      "id": "work",
+      "action": "click:#btnWork",
+      "scroll": "top",
+      "text": "第二步，客戶呼叫密封版 Beagle。它跑在 TEE 沙箱裡，回應自動被蓋上 X-Agent-Proof 印章。你可以看到，簽章者和鏈上 getAgentSeal 查到的地址完全相同，而且印章上指名，只有這位客戶可以兌現。",
+      "scrollAfter": "proof"
+    },
+    {
+      "id": "verify",
+      "action": "click:#btnVerify|click:#btnVerifyTampered",
+      "scroll": "proof",
+      "text": "任何人都能離線驗證這枚印章，不需要 gas，也不需要經過我們。四項檢查全部通過。現在我們把回應改掉一個字，再驗一次，立刻失敗，因為印章綁定的是 Agent 送出的每一個位元組。"
+    },
+    {
+      "id": "forged",
+      "action": "click:#btnFake",
+      "scroll": "top",
+      "text": "那如果有人偽造印章呢？我們把雜湊竄改之後送給合約。合約直接回滾，Capybara 搖頭。沒有證明，就沒有錢。"
+    },
+    {
+      "id": "settle",
+      "action": "click:#btnSettle",
+      "scroll": "top",
+      "text": "現在送出真正的印章。合約還原簽章者、比對鏈上的 getAgentSeal，然後放款。寶箱打開，賞金直接付給 Agent 的印章地址。"
+    },
+    {
+      "id": "archive",
+      "action": "wait-archive",
+      "scroll": "top",
+      "text": "付款之後，收據包會自動歸檔到 0G Storage。任務、回應、印章、還有結算交易，全部打包成一個不可竄改的檔案，而根雜湊，就是它永久的指標。"
+    },
+    {
+      "id": "fetch",
+      "action": "click:#btnFetch",
+      "scroll": "top",
+      "text": "我們現在用根雜湊，直接從 0G Storage 把收據取回來，完全不經過我們自己的伺服器，然後重新驗證一次，全部通過。TEE 證明是誰說的，Storage 保存說了什麼，Chain 記錄已經付款。"
+    },
+    {
+      "id": "replay",
+      "action": "click:#btnReplay",
+      "scroll": "top",
+      "text": "最後一個問題：如果有人拿這枚已經付過款的印章，再去領第二筆錢呢？合約以 seal reused 拒絕。一次服務，一枚印章，一次付款。這就是打勾勾託管。"
+    }
+  ]
+}

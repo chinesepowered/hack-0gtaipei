@@ -59,5 +59,5 @@ for (const s of script.slides) {
   list.push(`file 'clip${s.slide}${tag}.mp4'`); console.log("clip", clip, d.toFixed(1) + "s");
 }
 writeFileSync(`${OUT}/list${tag}.txt`, list.join("\n"));
-execFileSync(ffmpegPath, ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", `${OUT}/list${tag}.txt`, "-c", "copy", outFile], { stdio: "inherit" });
+execFileSync(ffmpegPath, ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", `${OUT}/list${tag}.txt`, "-c:v", "copy", "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", outFile], { stdio: "inherit" });
 console.log(`done: ${outFile}, ${total.toFixed(0)}s total`);

@@ -21,16 +21,34 @@ pnpm start          # server on :3000, prints router + escrow + sealed agent id
 
 Everything in the demo runs on testnet: the escrow and jobs on Galileo, the key-signed Beagle on the testnet Router with qwen2.5-omni. The only piece tied to mainnet is the sealed Beagle's own model key inside its TEE, set at deploy time. That account is empty, so its `/api/answer` text comes back as an error. The seal on that reply is still valid and still pays. Do not bother chatting with it before the demo; it cannot answer.
 
-## Narrated video option
+## Narrated videos
 
-Two cuts, both slides 1 to 4 narrated in Taiwan Mandarin (ElevenLabs, voice Lee Ting Ting), 1080p:
+All narrated in Taiwan Mandarin (ElevenLabs, voice Lee Ting Ting), 1920x1080, loudness-normalised.
 
-| File | Length | Use when |
+| File | Length | What it is |
 |---|---|---|
-| `docs/pitch_cn.mp4` | 3:15 | The slot allows the video plus about 90 seconds of live demo |
-| `docs/pitch_cn_2min.mp4` | 1:53 | A strict three-minute slot: video, then about 60 seconds of live demo |
+| `docs/submission_cn.mp4` | 4:50 | **For the submission form.** Short pitch plus the full live run. |
+| `docs/submission_cn_full.mp4` | 6:12 | Same, with the longer pitch. Rebuild it with the join command below. |
+| `docs/pitch_cn.mp4` | 3:15 | Slides 1 to 4 only |
+| `docs/pitch_cn_2min.mp4` | 1:53 | Slides 1 to 4, tighter |
+| `docs/demo_cn.mp4` | 2:57 | The live run only: lock, work, verify, forge, pay, archive, fetch back, replay |
 
-Play one instead of speaking over the slides, then switch to the live demo tab. The short cut keeps every claim and drops the elaboration; the narration text for each is in `docs/narration_cn.json` and `docs/narration_cn_2min.json`. Regenerate after any slide change with `node scripts/narrate.mjs` for the full cut, or `node scripts/narrate.mjs --script docs/narration_cn_2min.json --out docs/pitch_cn_2min.mp4` for the short one. Add `--skip-tts` to reuse the audio, `--voice "Anna Su (TW)"` for the clearer, more neutral backup voice.
+The demo video is a real browser driving the real app: every transaction in it is on 0G Galileo,
+and the receipt it archives is really fetched back from 0G Storage.
+
+To rebuild after a change (the server must be running, and the sealed agent awake):
+
+```bash
+node scripts/narrate.mjs                                             # pitch, full cut
+node scripts/narrate.mjs --script docs/narration_cn_2min.json --out docs/pitch_cn_2min.mp4
+node scripts/record-demo.mjs                                         # records a fresh live run
+node scripts/join-video.mjs docs/submission_cn.mp4 docs/pitch_cn_2min.mp4 docs/demo_cn.mp4
+```
+
+Add `--skip-tts` to reuse the generated speech, or `--voice "Anna Su (TW)"` for the clearer backup voice.
+The narration texts are `docs/narration_cn.json`, `docs/narration_cn_2min.json` and `docs/narration_demo_cn.json`.
+
+If you present live instead, play a pitch cut and then switch to the demo tab:
 
 ## The talk track
 
